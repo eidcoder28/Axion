@@ -1,6 +1,6 @@
-import { renderPosts } from "./main-feed.js";
-import templates from "../templates.js";
-import errors from "/shared/errors.js";
+import { renderPosts } from "@app/posts/main-feed.js";
+import templates from "@app/templates.js";
+import errors from "@shared/errors.js";
 import {
     sendRequest,
     capitalizeFirstLetter,
@@ -11,7 +11,7 @@ import {
     Alert,
     Swal,
     validator
-} from "../utils.js";
+} from "@app/utils.js";
 
 async function getBookmarks(skip = 0) {
     const response = await sendRequest({

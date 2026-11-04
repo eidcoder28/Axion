@@ -1,7 +1,7 @@
-import showBookmarks from "../posts/bookmarks.js";
-import templates from "../templates.js";
-import { renderProfilePosts } from "./profile-feed.js";
-import errors from "/shared/errors.js";
+import showBookmarks from "@app/posts/bookmarks.js";
+import templates from "@app/templates.js";
+import { renderProfilePosts } from "@app/users/profile-feed.js";
+import errors from "@shared/errors.js";
 import {
     sendRequest,
     capitalizeFirstLetter,
@@ -13,7 +13,7 @@ import {
     Alert,
     Swal,
     validator
-} from "../utils.js";
+} from "@app/utils.js";
 
 export default async function showProfile(id) {
     const response = await sendRequest({

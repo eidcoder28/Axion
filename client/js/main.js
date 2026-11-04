@@ -1,8 +1,8 @@
-import { initQuickInfo, $ } from "./utils.js";
-import { getPosts, postsState } from "./posts/main-feed.js";
-import './users/signup.js';
-import './users/profile.js';
-import './posts/create.js';
+import { initQuickInfo, $ } from "@app/utils.js";
+import { getPosts, postsState } from "@app/posts/main-feed.js";
+import "@app/users/signup.js";
+import "@app/users/profile.js";
+import "@app/posts/create.js";
 
 // Init
 $(document).on("keydown", "[role='button']", function (e) {
