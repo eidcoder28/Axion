@@ -7,19 +7,17 @@ import MongoStore from "connect-mongo";
 import errors from "../shared/errors.js";
 import postsRouter from "./routes/posts.js";
 import authRouter from "./routes/auth.js";
-import { createLimiter } from "./core/utils.js";
+import { limit } from "./core/utils.js";
 
 const __dirname = import.meta.dirname;
 const app = express();
 
-// MongoDB
 mongoose.connect(config.MONGO_URI)
     .then(() => console.log("MongoDB connected!"))
     .catch(err => console.error(err.message));
 
-// Basic config
-app.use(express.static(path.join(__dirname, "..", "client"), { index: false }));
 app.use("/shared", express.static(path.join(__dirname, "..", "shared")));
+app.use(express.static(path.join(__dirname, "..", "client"), { index: false }));
 app.use(express.json({ limit: config.JSON_BODY_LIMIT }));
 app.use(
     session({
@@ -39,7 +37,7 @@ app.use(
     })
 );
 
-const mainLimiter = createLimiter(config.RATE_LIMIT_WINDOW_MS, config.MAIN_RATE_LIMIT_MAX_REQ);
+const mainLimiter = limit();
 app.use(mainLimiter);
 
 app.use("/api/v1", postsRouter);

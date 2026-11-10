@@ -1,5 +1,5 @@
 import { body, param, query } from "express-validator";
-import { validateResult } from "./utils.js";
+import { validate } from "./utils.js";
 import config from "./config.js";
 import errors from "../../shared/errors.js";
 
@@ -53,18 +53,18 @@ const commentValidator = () => [
 ]
 
 // Posts
-export const createPostsValidator = [...postValidator(), validateResult]
-export const editPostsValidator = [mongoIdParam("id", "Post ID"), ...postValidator(), validateResult]
-export const getPostsValidator = [queryInt("skip", "Skip"), validateResult]
-export const getPostValidator = [mongoIdParam("id", "Post ID"), validateResult]
+export const createPostsValidator = [...postValidator(), validate]
+export const editPostsValidator = [mongoIdParam("id", "Post ID"), ...postValidator(), validate]
+export const getPostsValidator = [queryInt("skip", "Skip"), validate]
+export const getPostValidator = [mongoIdParam("id", "Post ID"), validate]
 
 // Comments
-export const commentsValidator = [mongoIdParam("id", "Post ID"), ...commentValidator(), validateResult]
-export const editCommentValidator = [mongoIdParam("id", "Comment ID"), ...commentValidator(), validateResult]
-export const getCommentsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "Post ID"), validateResult]
-export const getCommentValidator = [mongoIdParam("id", "Comment ID"), validateResult]
+export const commentsValidator = [mongoIdParam("id", "Post ID"), ...commentValidator(), validate]
+export const editCommentValidator = [mongoIdParam("id", "Comment ID"), ...commentValidator(), validate]
+export const getCommentsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "Post ID"), validate]
+export const getCommentValidator = [mongoIdParam("id", "Comment ID"), validate]
 
 // Auth
-export const userAuthValidator = [...userValidator(), validateResult]
-export const getUserProfileValidator = [mongoIdParam("id", "User ID"), validateResult]
-export const getUserPostsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "User ID"), validateResult]
+export const userAuthValidator = [...userValidator(), validate]
+export const getUserProfileValidator = [mongoIdParam("id", "User ID"), validate]
+export const getUserPostsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "User ID"), validate]

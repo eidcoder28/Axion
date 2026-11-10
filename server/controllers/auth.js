@@ -4,7 +4,7 @@ import config from "../core/config.js";
 import errors from "../../shared/errors.js";
 
 export async function login(req, res) {
-    const { username, password } = req.cleanData;
+    const { username, password } = req.data;
 
     const user = await schemas.Users.findOne({ username }).select("password").lean();
     if (!user) return res.status(401).json({ error: errors.INVALID_CREDENTIALS() });
@@ -27,7 +27,7 @@ export async function login(req, res) {
 }
 
 export async function signup(req, res) {
-    const { username, password } = req.cleanData;
+    const { username, password } = req.data;
     const hashedPassword = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
 
     const user = await schemas.Users.create({
@@ -50,7 +50,7 @@ export async function signup(req, res) {
 }
 
 export async function getUserProfile(req, res) {
-    const id = req.cleanData.id;
+    const id = req.data.id;
     const user = await schemas.Users.findById(id)
         .select("username")
         .lean();
@@ -61,7 +61,7 @@ export async function getUserProfile(req, res) {
 }
 
 export async function getUserPosts(req, res) {
-    const { id, skip } = req.cleanData;
+    const { id, skip } = req.data;
     const posts = await schemas.Posts.find({ by: id })
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
