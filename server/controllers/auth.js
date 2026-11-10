@@ -5,9 +5,7 @@ import config from "../core/config.js";
 import { checkAuth, generateRecoveryCodes, createLimiter } from "../core/utils.js";
 import errors from "../../shared/errors.js";
 import {
-    updateUserBioValidator,
-    loginValidator,
-    signupValidator,
+    userAuthValidator,
     getUserProfileValidator,
     getUserPostsValidator
 } from "../core/validators.js";
@@ -15,7 +13,7 @@ import {
 const router = express.Router();
 const authRateLimiter = createLimiter(config.RATE_LIMIT_WINDOW_MS, config.AUTH_RATE_LIMIT_MAX_REQ);
 
-router.post("/users/login", authRateLimiter, loginValidator, async (req, res) => {
+router.post("/users/login", authRateLimiter, userAuthValidator, async (req, res) => {
     const { username, password } = req.cleanData;
 
     const user = await schemas.Users.findOne({ username }).select("password").lean();
@@ -36,16 +34,14 @@ router.post("/users/login", authRateLimiter, loginValidator, async (req, res) =>
     });
 });
 
-router.post("/users/signup", authRateLimiter, signupValidator, async (req, res) => {
-    const { username, password, email, bio } = req.cleanData;
+router.post("/users/signup", authRateLimiter, userAuthValidator, async (req, res) => {
+    const { username, password } = req.cleanData;
     const recoveryCodes = await generateRecoveryCodes();
     const hashedPassword = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
 
     const user = await schemas.Users.create({
         username,
-        email,
         password: hashedPassword,
-        bio,
         recoveryCodes: recoveryCodes.hashed
     });
 
@@ -64,7 +60,7 @@ router.post("/users/signup", authRateLimiter, signupValidator, async (req, res) 
 router.get("/users/:id/profile", checkAuth, getUserProfileValidator, async function (req, res) {
     const id = req.cleanData.id;
     const user = await schemas.Users.findById(id)
-        .select("username bio")
+        .select("username")
         .lean();
 
     if (!user) return res.status(404).json({ error: errors.NOT_FOUND("User") });
@@ -78,38 +74,10 @@ router.get("/users/:id/posts", checkAuth, getUserPostsValidator, async function 
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.USER_POSTS_LIMIT)
-        .populate("by", "-password -recoveryCodes -email")
+        .populate("by", "-password -recoveryCodes")
         .lean();
 
     return res.status(200).json({ success: true, posts });
-});
-
-router.put("/me/bio", checkAuth, updateUserBioValidator, async (req, res) => {
-    const bio = req.cleanData.bio;
-
-    const result = await schemas.Users.updateOne({
-        _id: req.session.userId
-    }, [
-        {
-            $set: {
-                bio: {
-                    $cond: [{ $eq: ["$bio", { $literal: bio }] }, "$bio", { $literal: bio }]
-                },
-                updatedAt: {
-                    $cond: [{ $eq: ["$bio", { $literal: bio }] }, "$updatedAt", "$$NOW"]
-                }
-            }
-        }
-    ], {
-        timestamps: false
-    });
-
-    if (result.matchedCount === 0) return res.status(404).json({ error: errors.NOT_FOUND("Account") });
-
-    return res.status(200).json({
-        changed: result.modifiedCount !== 0,
-        success: true
-    });
 });
 
 router.delete("/me/signout", checkAuth, async (req, res) => {

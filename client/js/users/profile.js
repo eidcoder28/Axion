@@ -1,18 +1,15 @@
 import showBookmarks from "@app/posts/bookmarks.js";
 import templates from "@app/templates.js";
 import { renderProfilePosts } from "@app/users/profile-feed.js";
-import errors from "@shared/errors.js";
 import {
     sendRequest,
     capitalize,
     lockEvent,
     config,
     quickInfo,
-    input,
     $,
     Alert,
-    Swal,
-    validator
+    Swal
 } from "@app/utils.js";
 
 export default async function showProfile(id) {
@@ -29,7 +26,6 @@ export default async function showProfile(id) {
         container: null,
         user: {
             username: capitalize(user.username) || "User",
-            bio: user.bio || "",
             id: user._id,
             isLoggedInUser: user._id === quickInfo?._id
         }
@@ -47,33 +43,6 @@ export default async function showProfile(id) {
 
             $popup.find("#reset-password-recovery-codes-btn").on("click", lockEvent(async function () {
                 Alert.info({ text: "Working on an update..." });
-            }));
-
-            $popup.find("#profile-bio-edit-btn").on("click", lockEvent(async function () {
-                const result = await input({
-                    inputValue: state.user.bio || "",
-                    inputAttributes: {
-                        maxLength: config.BIO_MAX_LENGTH
-                    },
-                    preConfirm: result => {
-                        if (!validator.isLength(result, { min: config.BIO_MIN_LENGTH })) {
-                            return Swal.showValidationMessage(errors.VALIDATION.MIN_LENGTH("Bio", config.BIO_MIN_LENGTH));
-                        }
-                    }
-                });
-
-                if (!result.isConfirmed) return;
-
-                // Send request
-                const response = await sendRequest({
-                    url: "/api/v1/me/bio",
-                    method: "PUT",
-                    body: { bio: result.value }
-                });
-
-                if (!response.success) return Alert.error({ text: response.error });
-                if (!response.changed) return Alert.info({ text: "No changed were made!" });
-                Alert.success({ text: "Bio updated!" });
             }));
 
             $popup.find("#profile-load-posts-btn").on("click", lockEvent(async function () {

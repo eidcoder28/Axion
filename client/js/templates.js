@@ -1,5 +1,3 @@
-import { renderSafeHtml } from "@app/utils.js";
-
 // Not bad for small scale ¯\_(ツ)_/¯
 const templates = {
   POST_EDITOR: () => `
@@ -41,31 +39,20 @@ const templates = {
 <h2>Sign Up</h2>
 <input type="text" id="signup-username" placeholder="Username">
 <input type="password" id="signup-password" placeholder="Password">
-<input type="email" id="signup-email" placeholder="Email">
-<input type="text" id="signup-bio" placeholder="Bio" autocomplete="off">      
 <p class="text-swal-auth">
     Already have an account? <span class="link-swal-auth" role="button" tabindex="0" data-target="login">Log in</span>
 </p>
 `,
 
   USER_PROFILE: (state) => `
-<div class="card">
-  <div class="space-between">
-    <p class="center-overflow"><b>Bio:</b> ${renderSafeHtml(state?.user?.bio, false) || "No bio found"}</p>
-    ${state?.user?.isLoggedInUser ? '<i class="fas fa-pen-to-square icon-helper" id="profile-bio-edit-btn" role="button" tabindex="0"></i>' : ""}
-  </div>
-  ${state?.user?.isLoggedInUser ? `
+${state?.user?.isLoggedInUser ? `
   <div class="center">
     <button id="profile-bookmarks-btn" class="w-full">
        <i class="fas fa-bookmark"></i>
-    </button>
-
-    <button id="reset-password-recovery-codes-btn" class="w-full">
-      <i class="fas fa-arrow-left-rotate"></i>
+       Load bookmarks
     </button>
   </div>
 ` : ""}
-</div>
 
 <div id="user-posts-container" class="scroll-container">
   <button id="profile-load-posts-btn" class="w-full">
