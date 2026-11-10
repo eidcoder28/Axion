@@ -74,7 +74,7 @@ app.post("/api/v1/posts", checkAuth, createPostsValidator, async (req, res) => {
 app.get("/api/v1/posts/:id", checkAuth, getPostValidator, async (req, res) => {
     const id = req.cleanData.id;
     const post = await schemas.Posts.findById(id)
-        .populate("by", "-password -recoveryCodes")
+        .populate("by", "-password")
         .lean();
 
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
@@ -87,7 +87,7 @@ app.get("/api/v1/posts", getPostsValidator, async (req, res) => {
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.POSTS_LIMIT)
-        .populate("by", "-password -recoveryCodes")
+        .populate("by", "-password")
         .lean();
 
     return res.status(200).json({ success: true, posts });
@@ -99,7 +99,7 @@ app.get("/api/v1/posts/:id/comments", checkAuth, getCommentsValidator, async (re
         .skip(skip)
         .limit(config.COMMENTS_LIMIT)
         .sort({ createdAt: -1, _id: -1 })
-        .populate("by", "-password -recoveryCodes")
+        .populate("by", "-password")
         .lean();
 
     return res.status(200).json({ success: true, comments });

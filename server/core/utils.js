@@ -15,23 +15,6 @@ export async function checkAuth(req, res, next) {
     next();
 }
 
-export async function generateRecoveryCodes(count = config.RECOVERY_CODE_COUNT) {
-    const recoveryCodesHashed = [];
-    const recoveryCodesRaw = [];
-
-    for (let i = 0; i < count; i++) {
-        const code = crypto.randomBytes(config.RECOVERY_CODE_RANDOM_BYTES).toString("hex");
-        const hashed = await bcrypt.hash(code, config.BCRYPT_SALT_ROUNDS);
-        recoveryCodesRaw.push(code);
-        recoveryCodesHashed.push(hashed);
-    }
-
-    return {
-        hashed: recoveryCodesHashed,
-        raw: recoveryCodesRaw
-    }
-}
-
 export function createLimiter(
     windowMs = config.RATE_LIMIT_WINDOW_MS,
     limit = config.MAIN_RATE_LIMIT_MAX_REQ,

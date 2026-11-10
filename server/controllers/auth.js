@@ -2,7 +2,7 @@ import express from "express";
 import bcrypt from "bcrypt";
 import schemas from "../core/schemas.js";
 import config from "../core/config.js";
-import { checkAuth, generateRecoveryCodes, createLimiter } from "../core/utils.js";
+import { checkAuth, createLimiter } from "../core/utils.js";
 import errors from "../../shared/errors.js";
 import {
     userAuthValidator,
@@ -36,13 +36,11 @@ router.post("/users/login", authRateLimiter, userAuthValidator, async (req, res)
 
 router.post("/users/signup", authRateLimiter, userAuthValidator, async (req, res) => {
     const { username, password } = req.cleanData;
-    const recoveryCodes = await generateRecoveryCodes();
     const hashedPassword = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
 
     const user = await schemas.Users.create({
         username,
-        password: hashedPassword,
-        recoveryCodes: recoveryCodes.hashed
+        password: hashedPassword
     });
 
     req.session.isLoggedIn = true;
@@ -53,7 +51,7 @@ router.post("/users/signup", authRateLimiter, userAuthValidator, async (req, res
             return res.status(500).json({ error: errors.SESSION_INITIALIZATION_FAILED() });
         }
 
-        return res.status(201).json({ success: true, recoveryCodes: recoveryCodes.raw });
+        return res.status(201).json({ success: true });
     });
 });
 
@@ -74,7 +72,7 @@ router.get("/users/:id/posts", checkAuth, getUserPostsValidator, async function 
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.USER_POSTS_LIMIT)
-        .populate("by", "-password -recoveryCodes")
+        .populate("by", "-password")
         .lean();
 
     return res.status(200).json({ success: true, posts });

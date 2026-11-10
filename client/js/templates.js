@@ -16,9 +16,6 @@ const templates = {
 <h2>Login</h2>
 <input type="text" id="login-username" placeholder="Username">
 <input type="password" id="login-password" placeholder="Password">
-<p class="link-swal-auth text-forget-password" role="button" tabindex="0" data-target="password_recovery">
-  Forgot your password?
-</p>
 <p class="text-swal-auth">
     Need an account? <span class="link-swal-auth" role="button" tabindex="0" data-target="signup">Sign up</span>
 </p>

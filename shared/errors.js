@@ -9,7 +9,6 @@ const formatLabel = (template, label) =>
         
 export const errors = {
     INVALID_CREDENTIALS: () => "Invalid username or password.",
-    INVALID_RECOVERY_CODE: () => "Invalid recovery code.",
     NOT_AUTHENTICATED: () => "You are not logged in.",
     SESSION_INITIALIZATION_FAILED: () => "Session initialization failed.",
     SESSION_DESTROY_FAILED: () => "Failed to destroy session.",

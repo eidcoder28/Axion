@@ -3,8 +3,7 @@ import config from "./config.js";
 
 const usersSchema = new mongoose.Schema({
     username: { type: String, trim: true, required: true, lowercase: true, minLength: config.USERNAME_MIN_LENGTH, maxLength: config.USERNAME_MAX_LENGTH },
-    password: { type: String, required: true },
-    recoveryCodes: { type: [String], default: [] },
+    password: { type: String, required: true }
 }, { timestamps: true });
 
 usersSchema.index({ username: 1 }, { unique: true });
