@@ -38,13 +38,12 @@ export default class PostEditor {
                 const title = $popup.find("#post-editor-title").val().trim();
                 const content = $popup.find("#post-editor-content").val().trim();
 
-                const missing = [
-                    validator.isEmpty(title),
-                    validator.isEmpty(content),
-                ].filter(Boolean);
+                if (validator.isEmpty(title)) {
+                    return Swal.showValidationMessage(errors.VALIDATION.REQUIRED("title"));
+                }
 
-                if (missing.length) {
-                    return Swal.showValidationMessage(errors.VALIDATION.REQUIRED_FIELDS(...missing));
+                if (validator.isEmpty(content)) {
+                    return Swal.showValidationMessage(errors.VALIDATION.REQUIRED("content"));
                 }
 
                 return { title, content };

@@ -28,7 +28,7 @@ export default class CommentEditor {
 
             preConfirm: result => {
                 if (validator.isEmpty(result)) {
-                    return Swal.showValidationMessage(errors.VALIDATION.REQUIRED("Comment"));
+                    return Swal.showValidationMessage(errors.VALIDATION.REQUIRED("comment"));
                 }
             }
         });

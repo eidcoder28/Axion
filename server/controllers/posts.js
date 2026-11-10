@@ -22,7 +22,7 @@ export async function getPost(req, res) {
         .populate("by", "-password")
         .lean();
 
-    if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
+    if (!post) return res.status(404).json({ error: errors.NOT_FOUND("post") });
     return res.status(200).json({ success: true, posts: [post] });
 }
 
@@ -107,7 +107,7 @@ export async function updatePost(req, res) {
         timestamps: false
     });
 
-    if (result.matchedCount === 0) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
+    if (result.matchedCount === 0) return res.status(404).json({ error: errors.NOT_FOUND("post") });
 
     return res.status(200).json({
         changed: result.modifiedCount !== 0,
@@ -142,7 +142,7 @@ export async function deletePost(req, res) {
 export async function createComment(req, res) {
     const { id, content } = req.data;
     const post = await schemas.Posts.exists({ _id: id });
-    if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
+    if (!post) return res.status(404).json({ error: errors.NOT_FOUND("post") });
 
     await schemas.Comments.create({ content, for: id, by: req.session.userId });
     return res.status(201).json({ success: true });
@@ -175,7 +175,7 @@ export async function updateComment(req, res) {
         timestamps: false
     });
 
-    if (result.matchedCount === 0) return res.status(404).json({ error: errors.NOT_FOUND("Comment") });
+    if (result.matchedCount === 0) return res.status(404).json({ error: errors.NOT_FOUND("comment") });
 
     return res.status(200).json({
         changed: result.modifiedCount !== 0,
