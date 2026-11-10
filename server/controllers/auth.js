@@ -1,19 +1,9 @@
-import express from "express";
 import bcrypt from "bcrypt";
 import schemas from "../core/schemas.js";
 import config from "../core/config.js";
-import { checkAuth, createLimiter } from "../core/utils.js";
 import errors from "../../shared/errors.js";
-import {
-    userAuthValidator,
-    getUserProfileValidator,
-    getUserPostsValidator
-} from "../core/validators.js";
 
-const router = express.Router();
-const authRateLimiter = createLimiter(config.RATE_LIMIT_WINDOW_MS, config.AUTH_RATE_LIMIT_MAX_REQ);
-
-router.post("/users/login", authRateLimiter, userAuthValidator, async (req, res) => {
+export async function login(req, res) {
     const { username, password } = req.cleanData;
 
     const user = await schemas.Users.findOne({ username }).select("password").lean();
@@ -24,17 +14,19 @@ router.post("/users/login", authRateLimiter, userAuthValidator, async (req, res)
 
     req.session.isLoggedIn = true;
     req.session.userId = user._id;
-    req.session.save((err) => {
+    function onSessionSaved(err) {
         if (err) {
             console.error(err.message);
             return res.status(500).json({ error: errors.SESSION_INITIALIZATION_FAILED() });
         }
 
         return res.status(200).json({ success: true });
-    });
-});
+    }
 
-router.post("/users/signup", authRateLimiter, userAuthValidator, async (req, res) => {
+    req.session.save(onSessionSaved);
+}
+
+export async function signup(req, res) {
     const { username, password } = req.cleanData;
     const hashedPassword = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
 
@@ -45,17 +37,19 @@ router.post("/users/signup", authRateLimiter, userAuthValidator, async (req, res
 
     req.session.isLoggedIn = true;
     req.session.userId = user._id;
-    req.session.save((err) => {
+    function onSessionSaved(err) {
         if (err) {
             console.error(err.message);
             return res.status(500).json({ error: errors.SESSION_INITIALIZATION_FAILED() });
         }
 
         return res.status(201).json({ success: true });
-    });
-});
+    }
 
-router.get("/users/:id/profile", checkAuth, getUserProfileValidator, async function (req, res) {
+    req.session.save(onSessionSaved);
+}
+
+export async function getUserProfile(req, res) {
     const id = req.cleanData.id;
     const user = await schemas.Users.findById(id)
         .select("username")
@@ -64,9 +58,9 @@ router.get("/users/:id/profile", checkAuth, getUserProfileValidator, async funct
     if (!user) return res.status(404).json({ error: errors.NOT_FOUND("User") });
 
     return res.status(200).json({ success: true, user });
-});
+}
 
-router.get("/users/:id/posts", checkAuth, getUserPostsValidator, async function (req, res) {
+export async function getUserPosts(req, res) {
     const { id, skip } = req.cleanData;
     const posts = await schemas.Posts.find({ by: id })
         .sort({ createdAt: -1, _id: -1 })
@@ -76,10 +70,10 @@ router.get("/users/:id/posts", checkAuth, getUserPostsValidator, async function 
         .lean();
 
     return res.status(200).json({ success: true, posts });
-});
+}
 
-router.delete("/me/signout", checkAuth, async (req, res) => {
-    req.session.destroy(err => {
+export async function signout(req, res) {
+    function onSessionDestroyed(err) {
         if (err) {
             console.error(err.message);
             return res.status(500).json({ error: errors.SESSION_DESTROY_FAILED() });
@@ -87,22 +81,22 @@ router.delete("/me/signout", checkAuth, async (req, res) => {
 
         res.clearCookie("connect.sid");
         return res.status(200).json({ success: true });
-    });
-});
+    }
 
-router.get("/me/quick-info", checkAuth, async (req, res) => {
+    req.session.destroy(onSessionDestroyed);
+}
+
+export async function quickInfo(req, res) {
     return res.status(200).json({
         success: true,
         username: req.currentUser.username,
         _id: req.currentUser._id
     });
-});
+}
 
-router.get("/me/status", async function (req, res) {
+export async function status(req, res) {
     return res.status(200).json({
         success: true,
         loggedIn: req.session.isLoggedIn
     });
-});
-
-export default router;
+}
