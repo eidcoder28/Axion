@@ -55,7 +55,7 @@ export async function getUserProfile(req, res) {
         .select("username")
         .lean();
 
-    if (!user) return res.status(404).json({ error: errors.NOT_FOUND("User") });
+    if (!user) return res.status(404).json({ error: errors.NOT_FOUND("user") });
 
     return res.status(200).json({ success: true, user });
 }

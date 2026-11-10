@@ -21,50 +21,50 @@ const mongoIdParam = (field, label) => param(field)
 
 // Domain-specific validators
 const userValidator = () => [
-    ...baseTextBody("username", "Username"),
+    ...baseTextBody("username", "username"),
     body("username")
         .isLength({ min: config.USERNAME_MIN_LENGTH, max: config.USERNAME_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.LENGTH_RANGE("Username", config.USERNAME_MIN_LENGTH, config.USERNAME_MAX_LENGTH)),
+        .withMessage(errors.VALIDATION.LENGTH_RANGE("username", config.USERNAME_MIN_LENGTH, config.USERNAME_MAX_LENGTH)),
     body("username").toLowerCase(),
 
-    ...baseTextBody("password", "Password"),
+    ...baseTextBody("password", "password"),
     body("password")
         .isLength({ min: config.PASSWORD_MIN_LENGTH, max: config.PASSWORD_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.LENGTH_RANGE("Password", config.PASSWORD_MIN_LENGTH, config.PASSWORD_MAX_LENGTH))
+        .withMessage(errors.VALIDATION.LENGTH_RANGE("password", config.PASSWORD_MIN_LENGTH, config.PASSWORD_MAX_LENGTH))
 ]
 
 const postValidator = () => [
-    ...baseTextBody("title", "Post title"),
+    ...baseTextBody("title", "post title"),
     body("title")
         .isLength({ max: config.POST_TITLE_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.MAX_LENGTH("Post title", config.POST_TITLE_MAX_LENGTH)),
+        .withMessage(errors.VALIDATION.MAX_LENGTH("post title", config.POST_TITLE_MAX_LENGTH)),
 
-    ...baseTextBody("content", "Post content"),
+    ...baseTextBody("content", "post content"),
     body("content")
         .isLength({ max: config.POST_CONTENT_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.MAX_LENGTH("Post content", config.POST_CONTENT_MAX_LENGTH))
+        .withMessage(errors.VALIDATION.MAX_LENGTH("post content", config.POST_CONTENT_MAX_LENGTH))
 ]
 
 const commentValidator = () => [
-    ...baseTextBody("content", "Content"),
+    ...baseTextBody("content", "content"),
     body("content")
         .isLength({ max: config.COMMENTS_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.MAX_LENGTH("Content", config.COMMENTS_MAX_LENGTH))
+        .withMessage(errors.VALIDATION.MAX_LENGTH("content", config.COMMENTS_MAX_LENGTH))
 ]
 
 // Posts
 export const createPostsValidator = [...postValidator(), validate]
-export const editPostsValidator = [mongoIdParam("id", "Post ID"), ...postValidator(), validate]
-export const getPostsValidator = [queryInt("skip", "Skip"), validate]
-export const getPostValidator = [mongoIdParam("id", "Post ID"), validate]
+export const editPostsValidator = [mongoIdParam("id", "post ID"), ...postValidator(), validate]
+export const getPostsValidator = [queryInt("skip", "skip"), validate]
+export const getPostValidator = [mongoIdParam("id", "post ID"), validate]
 
 // Comments
-export const commentsValidator = [mongoIdParam("id", "Post ID"), ...commentValidator(), validate]
-export const editCommentValidator = [mongoIdParam("id", "Comment ID"), ...commentValidator(), validate]
-export const getCommentsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "Post ID"), validate]
-export const getCommentValidator = [mongoIdParam("id", "Comment ID"), validate]
+export const commentsValidator = [mongoIdParam("id", "post ID"), ...commentValidator(), validate]
+export const editCommentValidator = [mongoIdParam("id", "comment ID"), ...commentValidator(), validate]
+export const getCommentsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "post ID"), validate]
+export const getCommentValidator = [mongoIdParam("id", "comment ID"), validate]
 
 // Auth
 export const userAuthValidator = [...userValidator(), validate]
-export const getUserProfileValidator = [mongoIdParam("id", "User ID"), validate]
-export const getUserPostsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "User ID"), validate]
+export const getUserProfileValidator = [mongoIdParam("id", "user ID"), validate]
+export const getUserPostsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "user ID"), validate]

@@ -49,7 +49,7 @@ app.get("/", (req, res) => {
 
 app.use((req, res) => {
     // Return a simple JSON response for simplicity :)
-    res.status(404).json({ error: errors.NOT_FOUND("Route") });
+    res.status(404).json({ error: errors.NOT_FOUND("route") });
 });
 
 app.use((err, req, res, next) => {
