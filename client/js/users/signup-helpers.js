@@ -33,33 +33,8 @@ function validatePassword(password) {
     return null;
 }
 
-function validateEmail(email) {
-    if (validator.isEmpty(email)) return errors.VALIDATION.REQUIRED("Email");
-    if (!validator.isEmail(email)) return errors.VALIDATION.INVALID_FORMAT("email");
-
-    return null;
-}
-
-function validateBio(bio) {
-    const BIO_MIN_LENGTH = config.BIO_MIN_LENGTH;
-
-    if (validator.isEmpty(bio)) return errors.VALIDATION.REQUIRED("Bio");
-    if (!validator.isLength(bio, { min: BIO_MIN_LENGTH })) {
-        return errors.VALIDATION.MIN_LENGTH("Bio", BIO_MIN_LENGTH);
-    }
-
-    return null;
-}
-
-export function getLoginError(username, password) {
+export function getAuthError(username, password) {
     return validateUsername(username) || validatePassword(password);
-}
-
-export function getSignUpError(username, password, email, bio) {
-    return validateUsername(username) ||
-        validatePassword(password) ||
-        validateEmail(email) ||
-        validateBio(bio);
 }
 
 export async function toggleAuthButtons() {

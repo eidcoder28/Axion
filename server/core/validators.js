@@ -77,33 +77,6 @@ export const renameBookmarkValidator = [
 ]
 
 // Auth
-export const loginValidator = [...userValidator(), validateResult]
+export const userAuthValidator = [...userValidator(), validateResult]
 export const getUserProfileValidator = [mongoIdParam("id", "User ID"), validateResult]
 export const getUserPostsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "User ID"), validateResult]
-
-export const signupValidator = [
-    ...userValidator(),
-    ...baseTextBody("email", "Email"),
-
-    ...baseTextBody("bio", "Bio"),
-    body("bio")
-        .isLength({ min: config.BIO_MIN_LENGTH, max: config.BIO_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.LENGTH_RANGE("Bio", config.BIO_MIN_LENGTH, config.BIO_MAX_LENGTH)),
-
-    body("email")
-        .isLength({ max: config.EMAIL_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.MAX_LENGTH("Email", config.EMAIL_MAX_LENGTH)),
-    body("email")
-        .isEmail()
-        .withMessage(errors.VALIDATION.INVALID_FORMAT("email")),
-    body("email").normalizeEmail(),
-    validateResult
-]
-
-export const updateUserBioValidator = [
-    ...baseTextBody("bio", "Bio"),
-    body("bio")
-        .isLength({ min: config.BIO_MIN_LENGTH, max: config.BIO_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.LENGTH_RANGE("Bio", config.BIO_MIN_LENGTH, config.BIO_MAX_LENGTH)),
-    validateResult
-]
