@@ -1,33 +1,35 @@
 header,
 footer {
-    background-color: var(--accent-charcoal);
+    background-color: var(--color-accent-light);
     padding: 10px;
-    color: var(--accent-white);
-    margin: 10px;
-    border-radius: 20px;
+    color: var(--color-ink);
+    margin: 12px 16px 0;
+    border: 1px solid var(--color-border);
+    border-radius: 12px;
     font-weight: bold;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    transition: background-color 0.3s ease;
 }
 
 .logo {
-    font-size: 20px;
+    font-size: 21px;
     font-weight: bold;
-    margin: 10px;
-    color: var(--accent-white);
+    margin: 4px;
+    color: var(--color-accent-hover);
     text-decoration: none;
 }
 
 main {
     display: flex;
     flex-direction: column;
-    height: calc(100vh - 120px);
-    margin: 20px;
-    background-color: whitesmoke;
-    border-radius: 20px;
-    padding: 20px;
+    flex: 1;
+    min-height: 0;
+    margin: 16px;
+    background-color: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-radius: 14px;
+    padding: 22px;
     box-sizing: border-box;
 }
 
@@ -37,6 +39,24 @@ main {
 }
 
 #posts-container {
-    height: 100%;
+    min-height: 0;
+    flex: 1;
     overflow: auto;
+}
+
+footer {
+    margin: 0 16px 12px;
+}
+
+@media (max-width: 600px) {
+    header,
+    footer {
+        margin-left: 10px;
+        margin-right: 10px;
+    }
+
+    main {
+        margin: 12px 10px;
+        border-radius: 12px;
+    }
 }

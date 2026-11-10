@@ -1,34 +1,25 @@
 pre {
     overflow: auto;
-    border-radius: 20px;
-    padding: 10px;
-    background-color: black;
-    color: var(--accent-white);
+    border-radius: 8px;
+    padding: 14px;
+    background-color: var(--color-ink);
+    color: var(--color-accent-light);
     transition: background-color 0.3s ease;
 }
 
+pre:hover {
+    background-color: var(--color-ink-soft);
+}
+
 blockquote {
-    margin: 20px 0;
-    padding: 10px;
-    background-color: white;
-    border-left: 5px solid var(--accent-main-blue);
+    margin: 18px 0;
+    padding: 12px 16px;
+    background-color: var(--color-surface-soft);
+    border-left: 3px solid var(--color-accent);
     border-radius: 0 8px 8px 0;
-    font-family: 'Georgia', serif;
-    font-size: 20px;
+    font-family: Georgia, serif;
+    font-size: 18px;
     font-style: italic;
-    color: #334155;
+    color: var(--color-ink-soft);
     overflow: auto;
-}
-
-img, video {
-    width: 100%;
-    height: auto;
-    border-radius: 10px;
-}
-
-th,
-td {
-    border-bottom: 2px solid black;
-    padding: 10px;
-    white-space: nowrap;
 }
