@@ -39,11 +39,7 @@ export default async function showProfile(id) {
         didOpen: () => {
             const $popup = $(Swal.getPopup());
             state.container = $popup.find("#user-posts-container");
-
-            $popup.find("#reset-password-recovery-codes-btn").on("click", lockEvent(async function () {
-                Alert.info({ text: "Working on an update..." });
-            }));
-
+            
             $popup.find("#profile-load-posts-btn").on("click", lockEvent(async function () {
                 await renderProfilePosts(state);
             }));

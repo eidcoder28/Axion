@@ -22,8 +22,7 @@ const profileBtn = $("#profile-btn");
 
 const modalRoutes = {
     "login": showLoginModal,
-    "signup": showSignUpModal,
-    "password_recovery": () => Alert.info({ text: "Working on an update..." })
+    "signup": showSignUpModal
 }
 
 $(document).on("click", ".link-swal-auth", function () {
@@ -101,13 +100,6 @@ async function showSignUpModal() {
     });
 
     if (!response.success) return Alert.error({ text: response.error });
-
-    // Download recovery codes
-    if (Array.isArray(response.recoveryCodes)) {
-        const blob = new Blob([response.recoveryCodes.join("\n")], { type: "text/plain" });
-        saveAs(blob, "recovery-codes.txt");
-    }
-
     await handleAuthSuccess("Account created successfully!");
 }
 
