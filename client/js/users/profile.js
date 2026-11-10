@@ -18,7 +18,6 @@ export default async function showProfile(id) {
 
     if (!response.success) return Alert.error({ text: response.error });
 
-    // Save user data temporarily
     const user = response.user || {};
     const state = {
         skip: 0,
@@ -30,7 +29,6 @@ export default async function showProfile(id) {
         }
     }
 
-    // Render data
     Swal.fire({
         titleText: `Hello, ${state.user.username}!`,
         html: templates.USER_PROFILE(state),

@@ -23,7 +23,6 @@ export async function renderPosts(posts = []) {
     const postsContainer = $("#posts-container");
     postsContainer.empty();
 
-    // No data
     if (!Array.isArray(posts) || posts.length <= 0) {
         $("<div>")
             .addClass("state-nothing-found")
@@ -32,7 +31,6 @@ export async function renderPosts(posts = []) {
         return;
     }
 
-    // Render data
     const fragment = new DocumentFragment();
 
     posts.forEach(post => {
@@ -41,7 +39,6 @@ export async function renderPosts(posts = []) {
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
-        // Header
         $("<h2>")
             .addClass("overflow")
             .text(capitalize(safePost.title) || "No title found")
@@ -55,13 +52,11 @@ export async function renderPosts(posts = []) {
             })
             .appendTo(header);
 
-        // Content
         $("<div>")
             .addClass("post-content")
             .html(renderSafeHtml(safePost.content) || "No content found")
             .appendTo(card);
 
-        // Author
         $("<p>")
             .css({ color: "red", cursor: "pointer" })
             .attr("role", "button")
@@ -72,7 +67,6 @@ export async function renderPosts(posts = []) {
             }))
             .appendTo(card);
 
-        // Actions
         const reactions = $("<div>").addClass("reactions-container");
         card.append(reactions);
         const likes = Number(safePost.likes) || 0;
@@ -106,7 +100,6 @@ export async function renderPosts(posts = []) {
                 const result = await instance.open();
                 if (!result.isConfirmed) return;
 
-                // Send request
                 const response = await sendRequest({
                     url: `/api/v1/posts/${safePost._id}/comments`,
                     method: "POST",
