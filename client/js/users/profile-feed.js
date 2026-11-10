@@ -22,10 +22,8 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
     const response = preFetchedResponse || await getProfilePosts(state.user.id, state.skip);
     if (response && !response.success) return Alert.error({ text: response.error });
 
-    // Clear container
     $(state.container).empty();
 
-    // No data
     if (!Array.isArray(response?.posts) || response.posts.length <= 0) {
         $("<div>")
             .addClass("state-nothing-found")
@@ -34,7 +32,6 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
         return;
     }
 
-    // Render data
     const fragment = new DocumentFragment();
 
     response.posts.forEach(post => {
@@ -42,7 +39,6 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
-        // Header
         $("<h2>")
             .addClass("overflow")
             .text(capitalize(safePost.title) || "Untitled post")
@@ -56,13 +52,11 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
             })
             .appendTo(header);
 
-        // Content
         $("<div>")
             .addClass("post-content")
             .html(renderSafeHtml(safePost.content) || "Not content found")
             .appendTo(card);
 
-        // Actions
         if (state.user.isLoggedInUser) {
             const buttons = $("<div>").addClass("center-overflow");
             card.append(buttons);
@@ -89,7 +83,6 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
                     const result = await instance.open();
                     if (!result.isConfirmed) return;
 
-                    // Send request
                     const response = await sendRequest({
                         url: `/api/v1/posts/${safePost._id}/update`,
                         method: "PUT",

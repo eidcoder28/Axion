@@ -21,10 +21,9 @@ async function renderComments(state = {}, preFetchedResponse = null) {
     const response = preFetchedResponse || await getComments(state);
     if (response && !response.success) return Alert.error({ text: response.error });
 
-    // Clear container
     $(state.container).empty();
 
-    // No data
+    // No data :/
     if (!Array.isArray(response?.comments) || response.comments.length <= 0) {
         $("<div>")
             .addClass("state-nothing-found")
@@ -33,15 +32,12 @@ async function renderComments(state = {}, preFetchedResponse = null) {
         return;
     }
 
-    // Render data
     const fragment = new DocumentFragment();
 
     response.comments.forEach(comment => {
         const safeComment = comment || {};
         const safeBy = safeComment.by || {};
         const card = $("<div>").addClass("card").appendTo(fragment);
-
-        // Header
         const header = $("<div>").addClass("space-between").appendTo(card);
 
         $("<h3>")
@@ -60,7 +56,6 @@ async function renderComments(state = {}, preFetchedResponse = null) {
                     const result = await instance.open();
                     if (!result.isConfirmed) return;
 
-                    // Send request
                     const response = await sendRequest({
                         url: `/api/v1/comments/${safeComment._id}/update`,
                         method: "PUT",
@@ -91,12 +86,10 @@ async function renderComments(state = {}, preFetchedResponse = null) {
                 .appendTo(buttons);
         }
 
-        /// Content
         $("<p>")
             .text(safeComment.content || "No content found")
             .appendTo(card);
 
-        // Edited badge
         if (safeComment.editedAt) {
             $("<small>")
                 .text("(Edited)")

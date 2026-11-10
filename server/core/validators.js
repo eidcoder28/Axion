@@ -19,7 +19,6 @@ const mongoIdParam = (field, label) => param(field)
     .exists().withMessage(errors.VALIDATION.REQUIRED(label))
     .isMongoId().withMessage(errors.VALIDATION.INVALID_FORMAT(label));
 
-// Domain-specific validators
 const userValidator = () => [
     ...baseTextBody("username", "username"),
     body("username")
@@ -52,19 +51,18 @@ const commentValidator = () => [
         .withMessage(errors.VALIDATION.MAX_LENGTH("content", config.COMMENTS_MAX_LENGTH))
 ]
 
-// Posts
+// Validators
+
 export const createPostsValidator = [...postValidator(), validate]
 export const editPostsValidator = [mongoIdParam("id", "post ID"), ...postValidator(), validate]
 export const getPostsValidator = [queryInt("skip", "skip"), validate]
 export const getPostValidator = [mongoIdParam("id", "post ID"), validate]
 
-// Comments
 export const commentsValidator = [mongoIdParam("id", "post ID"), ...commentValidator(), validate]
 export const editCommentValidator = [mongoIdParam("id", "comment ID"), ...commentValidator(), validate]
 export const getCommentsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "post ID"), validate]
 export const getCommentValidator = [mongoIdParam("id", "comment ID"), validate]
 
-// Auth
 export const userAuthValidator = [...userValidator(), validate]
 export const getUserProfileValidator = [mongoIdParam("id", "user ID"), validate]
 export const getUserPostsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "user ID"), validate]
