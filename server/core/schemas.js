@@ -27,14 +27,6 @@ const postsSchema = new mongoose.Schema({
 postsSchema.index({ by: 1 });
 postsSchema.index({ likes: -1, createdAt: -1, _id: -1 });
 
-const bookmarksSchema = new mongoose.Schema({
-    for: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
-    by: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
-    title: { type: String, trim: true, required: true, maxLength: config.POST_TITLE_MAX_LENGTH }
-}, { timestamps: true });
-
-bookmarksSchema.index({ for: 1, by: 1 }, { unique: true });
-
 const commentsSchema = new mongoose.Schema({
     for: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
     by: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
@@ -48,6 +40,5 @@ export default {
     Users: mongoose.model("Users", usersSchema, "users"),
     Likes: mongoose.model("Likes", likesSchema, "likes"),
     Posts: mongoose.model("Posts", postsSchema, "posts"),
-    Bookmarks: mongoose.model("Bookmarks", bookmarksSchema, "bookmarks"),
     Comments: mongoose.model("Comments", commentsSchema, "comments")
 }

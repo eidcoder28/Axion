@@ -6,7 +6,6 @@ import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import errors from "../shared/errors.js";
 import schemas from "./core/schemas.js";
-import bookmarksRouter from "./controllers/bookmarks.js";
 import postsRouter from "./controllers/posts.js";
 import authRouter from "./controllers/auth.js";
 import {
@@ -50,23 +49,16 @@ app.use(
     })
 );
 
-const mainLimiter = createLimiter(config.RATE_LIMIT_WINDOW_MS, config.MAIN_RATE_LIMIT_MAX_REQ, {
-    skip: (req) => ["/api/v1/users/password", "/api/v1/users/recovery-codes"].some((path) => req.originalUrl.includes(path))
-});
-
+const mainLimiter = createLimiter(config.RATE_LIMIT_WINDOW_MS, config.MAIN_RATE_LIMIT_MAX_REQ);
 app.use(mainLimiter);
 
-// Sub routes
-app.use("/api/v1", bookmarksRouter);
 app.use("/api/v1", postsRouter);
 app.use("/api/v1", authRouter);
 
-// Main routes
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
 });
 
-// Basic routes
 app.post("/api/v1/posts", checkAuth, createPostsValidator, async (req, res) => {
     const { title, content } = req.cleanData;
 

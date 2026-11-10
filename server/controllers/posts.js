@@ -90,7 +90,6 @@ router.delete("/posts/:id/delete", checkAuth, getPostValidator, async function (
             // Not bad for small scale ;)
             await schemas.Likes.deleteMany({ for: id }, { session });
             await schemas.Comments.deleteMany({ for: id }, { session });
-            await schemas.Bookmarks.deleteMany({ for: id }, { session });
         });
     } finally {
         await session.endSession();
