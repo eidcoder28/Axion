@@ -64,18 +64,6 @@ export const editCommentValidator = [mongoIdParam("id", "Comment ID"), ...commen
 export const getCommentsValidator = [queryInt("skip", "Skip"), mongoIdParam("id", "Post ID"), validateResult]
 export const getCommentValidator = [mongoIdParam("id", "Comment ID"), validateResult]
 
-// Bookmarks
-export const getBookmarksValidator = [queryInt("skip", "Skip"), validateResult]
-export const deleteBookmarkValidator = [mongoIdParam("id", "Bookmark ID"), validateResult]
-export const renameBookmarkValidator = [
-    mongoIdParam("id", "Bookmark ID"),
-    ...baseTextBody("title", "Bookmark title"),
-    body("title")
-        .isLength({ max: config.POST_TITLE_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.MAX_LENGTH("Bookmark title", config.POST_TITLE_MAX_LENGTH)),
-    validateResult
-]
-
 // Auth
 export const userAuthValidator = [...userValidator(), validateResult]
 export const getUserProfileValidator = [mongoIdParam("id", "User ID"), validateResult]

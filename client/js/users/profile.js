@@ -1,4 +1,3 @@
-import showBookmarks from "@app/posts/bookmarks.js";
 import templates from "@app/templates.js";
 import { renderProfilePosts } from "@app/users/profile-feed.js";
 import {
@@ -47,10 +46,6 @@ export default async function showProfile(id) {
 
             $popup.find("#profile-load-posts-btn").on("click", lockEvent(async function () {
                 await renderProfilePosts(state);
-            }));
-
-            $popup.find("#profile-bookmarks-btn").on("click", lockEvent(async function () {
-                await showBookmarks();
             }));
 
             $popup.find("#profile-posts-prev-btn").on("click", lockEvent(async function () {

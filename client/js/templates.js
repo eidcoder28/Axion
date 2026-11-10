@@ -5,17 +5,6 @@ const templates = {
 <textarea id="post-editor-content" placeholder="Enter post content..."></textarea>
 `,
 
-  USER_BOOKMARKS: () => `
-<div id="user-bookmarks-container" class="scroll-container"></div>
-<div class="center">
-  <button id="user-bookmarks-prev-btn"> 
-    <i class="fas fa-caret-left"></i>
-  </button>
-  <button id="user-bookmarks-next-btn">
-    <i class="fas fa-caret-right"></i>
-  </button>
-</div>`,
-
   POST_COMMENTS: () => `
 <div id="comments-container" class="scroll-container"></div>
 <div class="center">
@@ -44,20 +33,11 @@ const templates = {
 </p>
 `,
 
-  USER_PROFILE: (state) => `
-${state?.user?.isLoggedInUser ? `
-  <div class="center">
-    <button id="profile-bookmarks-btn" class="w-full">
-       <i class="fas fa-bookmark"></i>
-       Load bookmarks
-    </button>
-  </div>
-` : ""}
-
+  USER_PROFILE: () => `
 <div id="user-posts-container" class="scroll-container">
   <button id="profile-load-posts-btn" class="w-full">
     <i class="fas fa-download"></i>
-    Load Posts
+    Load posts
   </button>
 </div>
 

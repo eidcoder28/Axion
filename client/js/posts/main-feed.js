@@ -47,30 +47,13 @@ export async function renderPosts(posts = []) {
             .text(capitalize(safePost.title) || "No title found")
             .appendTo(header);
 
-        const icons = $("<div>").addClass("center");
-        header.append(icons);
-
-        $("<i>")
-            .addClass("fas fa-bookmark post-icon")
-            .attr({ role: "button", tabindex: "0" })
-            .on("click", lockEvent(async function () {
-                const bookmarkResponse = await sendRequest({
-                    url: `/api/v1/bookmarks/${safePost._id}`,
-                    method: "POST"
-                });
-
-                if (!bookmarkResponse.success) return Alert.error({ text: bookmarkResponse.error });
-                Alert.success({ text: "Post bookmarked!" });
-            }))
-            .appendTo(icons);
-
         $("<i>")
             .addClass("fas fa-link post-icon")
             .attr({ role: "button", tabindex: "0" })
             .on("click", async function () {
                 copy(generatePostLink(safePost._id));
             })
-            .appendTo(icons);
+            .appendTo(header);
 
         // Content
         $("<div>")
