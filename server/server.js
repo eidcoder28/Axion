@@ -5,19 +5,9 @@ import session from "express-session";
 import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import errors from "../shared/errors.js";
-import schemas from "./core/schemas.js";
-import postsRouter from "./controllers/posts.js";
-import authRouter from "./controllers/auth.js";
-import {
-    checkAuth,
-    createLimiter
-} from "./core/utils.js";
-import {
-    getPostValidator,
-    getPostsValidator,
-    createPostsValidator,
-    getCommentsValidator
-} from "./core/validators.js";
+import postsRouter from "./routes/posts.js";
+import authRouter from "./routes/auth.js";
+import { createLimiter } from "./core/utils.js";
 
 const __dirname = import.meta.dirname;
 const app = express();
@@ -57,52 +47,6 @@ app.use("/api/v1", authRouter);
 
 app.get("/", (req, res) => {
     res.sendFile(path.join(__dirname, "..", "client", "index.html"));
-});
-
-app.post("/api/v1/posts", checkAuth, createPostsValidator, async (req, res) => {
-    const { title, content } = req.cleanData;
-
-    await schemas.Posts.create({
-        title,
-        content,
-        by: req.session.userId
-    });
-
-    return res.status(201).json({ success: true });
-});
-
-app.get("/api/v1/posts/:id", checkAuth, getPostValidator, async (req, res) => {
-    const id = req.cleanData.id;
-    const post = await schemas.Posts.findById(id)
-        .populate("by", "-password")
-        .lean();
-
-    if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
-    return res.status(200).json({ success: true, posts: [post] });
-});
-
-app.get("/api/v1/posts", getPostsValidator, async (req, res) => {
-    const skip = req.cleanData.skip;
-    const posts = await schemas.Posts.find({})
-        .sort({ createdAt: -1, _id: -1 })
-        .skip(skip)
-        .limit(config.POSTS_LIMIT)
-        .populate("by", "-password")
-        .lean();
-
-    return res.status(200).json({ success: true, posts });
-});
-
-app.get("/api/v1/posts/:id/comments", checkAuth, getCommentsValidator, async (req, res) => {
-    const { skip, id } = req.cleanData;
-    const comments = await schemas.Comments.find({ for: id })
-        .skip(skip)
-        .limit(config.COMMENTS_LIMIT)
-        .sort({ createdAt: -1, _id: -1 })
-        .populate("by", "-password")
-        .lean();
-
-    return res.status(200).json({ success: true, comments });
 });
 
 app.use((req, res) => {
