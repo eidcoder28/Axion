@@ -1,5 +1,5 @@
 import express from "express";
-import { checkAuth } from "../core/utils.js";
+import { requireAuth } from "../core/utils.js";
 import {
     createPostsValidator,
     getPostValidator,
@@ -25,15 +25,15 @@ import {
 
 const router = express.Router();
 
-router.post("/posts", checkAuth, createPostsValidator, createPost);
-router.get("/posts/:id", checkAuth, getPostValidator, getPost);
+router.post("/posts", requireAuth, createPostsValidator, createPost);
+router.get("/posts/:id", requireAuth, getPostValidator, getPost);
 router.get("/posts", getPostsValidator, listPosts);
-router.get("/posts/:id/comments", checkAuth, getCommentsValidator, getComments);
-router.post("/posts/:id/like", checkAuth, getPostValidator, likePost);
-router.put("/posts/:id/update", checkAuth, editPostsValidator, updatePost);
-router.delete("/posts/:id/delete", checkAuth, getPostValidator, deletePost);
-router.post("/posts/:id/comments", checkAuth, commentsValidator, createComment);
-router.put("/comments/:id/update", checkAuth, editCommentValidator, updateComment);
-router.delete("/comments/:id/delete", checkAuth, getCommentValidator, deleteComment);
+router.get("/posts/:id/comments", requireAuth, getCommentsValidator, getComments);
+router.post("/posts/:id/like", requireAuth, getPostValidator, likePost);
+router.put("/posts/:id/update", requireAuth, editPostsValidator, updatePost);
+router.delete("/posts/:id/delete", requireAuth, getPostValidator, deletePost);
+router.post("/posts/:id/comments", requireAuth, commentsValidator, createComment);
+router.put("/comments/:id/update", requireAuth, editCommentValidator, updateComment);
+router.delete("/comments/:id/delete", requireAuth, getCommentValidator, deleteComment);
 
 export default router;

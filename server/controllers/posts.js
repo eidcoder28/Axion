@@ -5,7 +5,7 @@ import errors from "../../shared/errors.js";
 import mongoose from "mongoose";
 
 export async function createPost(req, res) {
-    const { title, content } = req.cleanData;
+    const { title, content } = req.data;
 
     await schemas.Posts.create({
         title,
@@ -17,7 +17,7 @@ export async function createPost(req, res) {
 }
 
 export async function getPost(req, res) {
-    const id = req.cleanData.id;
+    const id = req.data.id;
     const post = await schemas.Posts.findById(id)
         .populate("by", "-password")
         .lean();
@@ -27,7 +27,7 @@ export async function getPost(req, res) {
 }
 
 export async function listPosts(req, res) {
-    const skip = req.cleanData.skip;
+    const skip = req.data.skip;
     const posts = await schemas.Posts.find({})
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
@@ -39,7 +39,7 @@ export async function listPosts(req, res) {
 }
 
 export async function getComments(req, res) {
-    const { skip, id } = req.cleanData;
+    const { skip, id } = req.data;
     const comments = await schemas.Comments.find({ for: id })
         .skip(skip)
         .limit(config.COMMENTS_LIMIT)
@@ -52,7 +52,7 @@ export async function getComments(req, res) {
 
 export async function likePost(req, res) {
     const session = await mongoose.startSession();
-    const id = req.cleanData.id;
+    const id = req.data.id;
 
     try {
         async function createLike() {
@@ -80,7 +80,7 @@ export async function likePost(req, res) {
 }
 
 export async function updatePost(req, res) {
-    const { content, title, id } = req.cleanData;
+    const { content, title, id } = req.data;
 
     const result = await schemas.Posts.updateOne({
         _id: id,
@@ -117,7 +117,7 @@ export async function updatePost(req, res) {
 
 export async function deletePost(req, res) {
     const session = await mongoose.startSession();
-    const id = req.cleanData.id;
+    const id = req.data.id;
 
     try {
         async function deletePostAndRelatedData() {
@@ -140,7 +140,7 @@ export async function deletePost(req, res) {
 }
 
 export async function createComment(req, res) {
-    const { id, content } = req.cleanData;
+    const { id, content } = req.data;
     const post = await schemas.Posts.exists({ _id: id });
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
 
@@ -149,7 +149,7 @@ export async function createComment(req, res) {
 }
 
 export async function updateComment(req, res) {
-    const { id, content } = req.cleanData;
+    const { id, content } = req.data;
 
     const result = await schemas.Comments.updateOne({
         _id: id,
@@ -184,7 +184,7 @@ export async function updateComment(req, res) {
 }
 
 export async function deleteComment(req, res) {
-    const id = req.cleanData.id;
+    const id = req.data.id;
     const result = await schemas.Comments.deleteOne({ _id: id, by: req.session.userId });
     if (result.deletedCount === 0) return res.status(404).json({ error: errors.ACCESS_DENIED("comment") });
 
