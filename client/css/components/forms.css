@@ -1,13 +1,25 @@
 input,
 textarea {
     width: 100%;
-    font-weight: bold;
+    color: var(--color-ink);
+    background-color: var(--color-surface);
     padding: 10px;
     box-sizing: border-box;
-    border: 1px solid var(--accent-secondary-gray);
-    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    border-radius: 8px;
     display: block;
-    margin-top: 20px;
+    margin-top: 14px;
+}
+
+input::placeholder,
+textarea::placeholder {
+    color: var(--color-muted);
+}
+
+input:focus,
+textarea:focus {
+    border-color: var(--color-accent);
+    outline: none;
 }
 
 textarea {
@@ -17,27 +29,24 @@ textarea {
 
 .text-forget-password {
     text-align: right;
-    color: var(--accent-main-gray);
+    color: var(--color-ink-soft);
     font-size: 14px;
     font-weight: bold;
-}
-
-.text-forget-password {
     cursor: pointer;
     transition: color 0.3s ease;
 }
 
 .text-forget-password:hover {
-    color: var(--accent-secondary-gray);
+    color: var(--color-accent);
 }
 
 button {
-    border-radius: 100px;
-    background-color: var(--accent-charcoal);
-    color: white;
+    border-radius: 8px;
+    background-color: var(--color-ink-soft);
+    color: var(--color-white);
     border: none;
     font-weight: bold;
-    padding: 10px;
+    padding: 10px 15px;
     cursor: pointer;
     transition: background-color 0.3s ease;
     white-space: nowrap;
@@ -45,13 +54,18 @@ button {
 }
 
 button:hover {
-    background-color: #222;
+    background-color: var(--color-ink);
+}
+
+button:disabled {
+    opacity: 0.55;
+    cursor: not-allowed;
 }
 
 .btn-danger {
-    background-color: red;
+    background-color: var(--color-accent);
 }
 
 .btn-danger:hover {
-    background-color: darkred;
+    background-color: var(--color-accent-hover);
 }
