@@ -13,7 +13,8 @@ const config = {
     PASSWORD_MAX_LENGTH: 64,
     POSTS_LIMIT: 15,
     USER_POSTS_LIMIT: 10,
-    COMMENTS_LIMIT: 20
+    COMMENTS_LIMIT: 20,
+    PAGINATION_MAX_SKIP: 5000
 }
 
 export default config;

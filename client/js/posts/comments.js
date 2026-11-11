@@ -123,6 +123,8 @@ export default async function showComments(id) {
 
             $popup.find("#comments-next-btn").on("click", lockEvent(async function () {
                 if ($(state.container).find(".state-nothing-found").length) return;
+                if (state.skip + config.COMMENTS_LIMIT > config.PAGINATION_MAX_SKIP) return;
+
                 state.skip += config.COMMENTS_LIMIT;
                 await renderComments(state);
             }));
