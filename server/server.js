@@ -53,7 +53,7 @@ app.use((req, res) => {
 });
 
 app.use((err, req, res, next) => {
-    if (err.code === 11000) return res.status(409).json({ error: errors.DUPLICATE_RESOURCE() });
+    if (err.code === 11000) return res.status(409).json({ error: errors.DUPLICATE_RESOURCE("resource") });
     if (err.isCustom) return res.status(err.statusCode).json({ error: err.message });
 
     // For debugging only :)
