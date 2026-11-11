@@ -42,7 +42,7 @@ export async function toggleAuthButtons() {
         url: "/api/v1/me/status"
     });
 
-    const isLoggedIn = !!status.loggedIn;
+    const isLoggedIn = !!status.isLoggedIn;
     signUpBtn.toggle(!isLoggedIn);
     loggedInGroup.toggle(isLoggedIn);
 }
