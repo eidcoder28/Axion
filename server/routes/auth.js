@@ -8,8 +8,8 @@ import {
     getUserProfile,
     getUserPosts,
     signout,
-    quickInfo,
-    status
+    getQuickInfo,
+    getStatus
 } from "../controllers/auth.js";
 
 const router = express.Router();
@@ -23,7 +23,7 @@ router.post("/users/signup", authRateLimit, userAuthValidator, signup);
 router.get("/users/:id/profile", requireAuth, getUserProfileValidator, getUserProfile);
 router.get("/users/:id/posts", requireAuth, getUserPostsValidator, getUserPosts);
 router.delete("/me/signout", requireAuth, signout);
-router.get("/me/quick-info", requireAuth, quickInfo);
-router.get("/me/status", status);
+router.get("/me/quick-info", requireAuth, getQuickInfo);
+router.get("/me/status", getStatus);
 
 export default router;

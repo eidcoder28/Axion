@@ -9,7 +9,7 @@ export async function requireAuth(req, res, next) {
     const user = await schemas.Users.findById(req.session.userId);
     if (!user) return res.status(404).json({ error: errors.NOT_FOUND("account") });
 
-    req.currentUser = user;
+    req.user = user;
     next();
 }
 
