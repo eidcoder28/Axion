@@ -34,6 +34,8 @@ if (!postsState.customPostId) {
         .html("<i class='fas fa-chevron-right'></i> Next")
         .on("click", lockEvent(async () => {
             if ($("#posts-container").find(".state-nothing-found").length) return;
+            if (postsState.skip + config.POSTS_LIMIT > config.PAGINATION_MAX_SKIP) return;
+
             postsState.skip += config.POSTS_LIMIT;
             await getPosts();
         }))

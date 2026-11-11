@@ -13,7 +13,8 @@ const baseTextBody = (field, label) => [
 
 const queryInt = (field, label) => query(field)
     .exists().withMessage(errors.VALIDATION.REQUIRED(`${label} value`))
-    .isInt({ min: 0 }).withMessage(errors.VALIDATION.NON_NEGATIVE_INTEGER(label));
+    .isInt({ min: 0, max: config.PAGINATION_MAX_SKIP }).withMessage(errors.VALIDATION.NON_NEGATIVE_INTEGER(label))
+    .withMessage(errors.VALIDATION.LENGTH_RANGE(label, 0, config.PAGINATION_MAX_SKIP));
 
 const mongoIdParam = (field, label) => param(field)
     .exists().withMessage(errors.VALIDATION.REQUIRED(label))
