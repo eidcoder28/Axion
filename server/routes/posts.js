@@ -13,7 +13,7 @@ import {
 import {
     createPost,
     getPost,
-    listPosts,
+    getPosts,
     getComments,
     likePost,
     updatePost,
@@ -27,7 +27,7 @@ const router = express.Router();
 
 router.post("/posts", requireAuth, createPostsValidator, createPost);
 router.get("/posts/:id", requireAuth, getPostValidator, getPost);
-router.get("/posts", getPostsValidator, listPosts);
+router.get("/posts", getPostsValidator, getPosts);
 router.get("/posts/:id/comments", requireAuth, getCommentsValidator, getComments);
 router.post("/posts/:id/like", requireAuth, getPostValidator, likePost);
 router.put("/posts/:id/update", requireAuth, editPostsValidator, updatePost);
