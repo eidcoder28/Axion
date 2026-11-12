@@ -25,7 +25,7 @@ export default async function showProfile(id) {
         user: {
             username: capitalize(user.username) || "User",
             id: user._id,
-            isLoggedInUser: user._id === quickInfo?._id
+            me: user._id === quickInfo?._id
         }
     }
 
