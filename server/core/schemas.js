@@ -10,10 +10,10 @@ usersSchema.index({ username: 1 }, { unique: true });
 
 const likesSchema = new mongoose.Schema({
     by: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
-    for: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
 }, { timestamps: true });
 
-likesSchema.index({ by: 1, for: 1 }, { unique: true });
+likesSchema.index({ by: 1, post: 1 }, { unique: true });
 
 const postsSchema = new mongoose.Schema({
     title: { type: String, trim: true, required: true, maxLength: config.POST_TITLE_MAX_LENGTH },
@@ -26,13 +26,13 @@ postsSchema.index({ by: 1 });
 postsSchema.index({ likes: -1, createdAt: -1, _id: -1 });
 
 const commentsSchema = new mongoose.Schema({
-    for: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
+    post: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
     by: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
     content: { type: String, trim: true, required: true, maxLength: config.COMMENTS_MAX_LENGTH },
     editedAt: { type: Date, default: null }
 }, { timestamps: true });
 
-commentsSchema.index({ for: 1 });
+commentsSchema.index({ post: 1 });
 
 export default {
     Users: mongoose.model("Users", usersSchema, "users"),
