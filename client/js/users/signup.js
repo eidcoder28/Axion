@@ -57,7 +57,7 @@ async function showLoginModal() {
     if (!result.isConfirmed) return;
 
     const response = await sendRequest({
-        url: "/api/v1/users/login",
+        url: "/api/v1/auth/login",
         method: "POST",
         body: result.value
     });
@@ -94,7 +94,7 @@ async function showSignUpModal() {
     if (!result.isConfirmed) return;
 
     const response = await sendRequest({
-        url: "/api/v1/users/signup",
+        url: "/api/v1/auth/signup",
         method: "POST",
         body: result.value
     });
@@ -109,7 +109,7 @@ signUpBtn.on("click", lockEvent(async function () {
 
 signOutBtn.on("click", lockEvent(async function () {
     const response = await sendRequest({
-        url: "/api/v1/me/signout",
+        url: "/api/v1/auth/signout",
         method: "DELETE"
     });
 
