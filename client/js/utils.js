@@ -42,7 +42,9 @@ export function lockEvent(fn) {
 
         try {
             await fn.call(this, e);
-        } catch {
+        } catch (err) {
+            // I like debugging =)
+            console.error(err);
             Alert.error({ text: errors.UNEXPECTED_ERROR() });
         } finally {
             el.removeAttr("inert");
@@ -51,7 +53,7 @@ export function lockEvent(fn) {
 }
 
 export async function sendRequest({ body, ...requestConfig }, showLoading = true) {
-    if (showLoading) Notiflix.Loading.standard("Workin on it...");
+    if (showLoading) Notiflix.Loading.standard("Working on it...");
 
     try {
         const response = await axios({
@@ -61,9 +63,10 @@ export async function sendRequest({ body, ...requestConfig }, showLoading = true
             credentials: "include"
         });
 
-        return response?.data || {};
-    } catch (error) {
-        return { error: error.response?.data?.error || errors.UNEXPECTED_ERROR() };
+        return response.data || {};
+    } catch (err) {
+        console.error(err);
+        return { error: response.data?.error || errors.UNEXPECTED_ERROR() };
     } finally {
         if (showLoading) Notiflix.Loading.remove();
     }
@@ -98,7 +101,6 @@ export async function initQuickInfo() {
 const BaseToast = Swal.mixin({
     toast: true,
     position: "bottom-end",
-    title: "",
     showConfirmButton: false,
     timer: 1500,
     timerProgressBar: true,
