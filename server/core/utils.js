@@ -44,8 +44,8 @@ export function validate(req, res, next) {
 }
 
 export class ClientError extends Error {
-    constructor(message, statusCode = 400) {
-        super(message);
+    constructor(msg, statusCode = 400) {
+        super(msg);
         this.statusCode = statusCode;
         this.isCustom = true;
     }

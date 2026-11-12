@@ -57,7 +57,7 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
             .html(renderSafeHtml(safePost.content) || "Not content found")
             .appendTo(card);
 
-        if (state.user.isLoggedInUser) {
+        if (state.user.me) {
             const buttons = $("<div>").addClass("center-overflow");
             card.append(buttons);
 

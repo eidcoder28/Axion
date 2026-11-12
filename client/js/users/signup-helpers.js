@@ -58,8 +58,8 @@ export async function toggleAuthButtons() {
     loggedInGroup.toggle(isLoggedIn);
 }
 
-export async function handleAuthSuccess(message) {
-    Alert.success({ text: message });
+export async function handleAuthSuccess(msg) {
+    Alert.success({ text: msg });
     await toggleAuthButtons();
     await initQuickInfo();
 }
