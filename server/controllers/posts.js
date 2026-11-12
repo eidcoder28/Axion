@@ -24,7 +24,7 @@ export async function likePost(req, res) {
                 throw new ClientError(errors.ACCESS_DENIED("post"), 404);
             }
 
-            await schemas.Likes.create([{ by: req.session.userId, for: id }], { session });
+            await schemas.Likes.create([{ by: req.session.userId, post: id }], { session });
         });
     } finally {
         await session.endSession();
@@ -75,8 +75,8 @@ export async function deletePost(req, res) {
                 throw new ClientError(errors.ACCESS_DENIED("post"), 404);
             }
 
-            await schemas.Likes.deleteMany({ for: id }, { session });
-            await schemas.Comments.deleteMany({ for: id }, { session });
+            await schemas.Likes.deleteMany({ post: id }, { session });
+            await schemas.Comments.deleteMany({ post: id }, { session });
         });
     } finally {
         await session.endSession();
@@ -90,7 +90,7 @@ export async function createComment(req, res) {
     const post = await schemas.Posts.exists({ _id: id });
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
 
-    await schemas.Comments.create({ content, for: id, by: req.session.userId });
+    await schemas.Comments.create({ content, post: id, by: req.session.userId });
     return res.status(201).json({ success: true });
 }
 
@@ -164,7 +164,7 @@ export async function getPosts(req, res) {
 
 export async function getComments(req, res) {
     const { skip, id } = req.data;
-    const comments = await schemas.Comments.find({ for: id })
+    const comments = await schemas.Comments.find({ post: id })
         .skip(skip)
         .limit(config.COMMENTS_LIMIT)
         .sort({ createdAt: -1, _id: -1 })
