@@ -12,7 +12,6 @@ import {
     quickInfo,
     $,
     Alert,
-    saveAs,
     Swal
 } from "@app/utils.js";
 
