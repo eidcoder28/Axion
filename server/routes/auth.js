@@ -20,12 +20,12 @@ import {
 const router = express.Router();
 const authRateLimit = limit({ limit: config.AUTH_RATE_LIMIT_MAX_REQ });
 
-router.post("/users/login", authRateLimit, loginValidator, login);
-router.post("/users/signup", authRateLimit, signupValidator, signup);
+router.post("/auth/login", authRateLimit, loginValidator, login);
+router.post("/auth/signup", authRateLimit, signupValidator, signup);
 router.get("/users/:id/profile", requireAuth, getUserProfileValidator, getUserProfile);
 router.get("/users/:id/posts", requireAuth, getUserPostsValidator, getUserPosts);
-router.delete("/me/signout", requireAuth, signout);
 router.get("/me/quick-info", requireAuth, getQuickInfo);
 router.get("/me/status", getStatus);
+router.delete("/auth/signout", requireAuth, signout);
 
 export default router;

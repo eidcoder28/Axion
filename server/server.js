@@ -37,7 +37,9 @@ app.use(
     })
 );
 
-const mainLimiter = limit();
+const mainLimiter = limit({
+    skip: (req) => req.path.includes("/auth")
+});
 app.use(mainLimiter);
 
 app.use("/api/v1", postsRouter);
