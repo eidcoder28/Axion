@@ -3,7 +3,6 @@ import Swal from "sweetalert2";
 import { marked } from "marked";
 import DOMPurify from "dompurify";
 import axios from "axios";
-import saveAs from "file-saver";
 import validator from "validator";
 import config from "@shared/config.js";
 import errors from "@shared/errors.js";
@@ -115,4 +114,4 @@ export const Alert = {
     info: (config = {}) => BaseToast.fire({ icon: "info", title: "Info", ...config })
 }
 
-export { $, config, saveAs, Swal, validator };
+export { $, config, Swal, validator };
