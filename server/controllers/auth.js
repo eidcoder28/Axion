@@ -22,9 +22,9 @@ export async function login(req, res) {
 }
 
 export async function signup(req, res) {
-    const { username, password } = req.data;
+    const { username, password, email } = req.data;
     const hashed = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
-    const user = await schemas.Users.create({ username, password: hashed });
+    const user = await schemas.Users.create({ username, email, password: hashed });
 
     req.session.isLoggedIn = true;
     req.session.userId = user._id;
@@ -55,7 +55,7 @@ export async function getUserPosts(req, res) {
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.USER_POSTS_LIMIT)
-        .populate("by", "-password")
+        .populate("by", "-password -email")
         .lean();
 
     return res.status(200).json({ success: true, posts });

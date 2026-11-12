@@ -5,9 +5,14 @@ import errors from "../../shared/errors.js";
 import { validationResult, matchedData } from "express-validator";
 
 export async function requireAuth(req, res, next) {
-    if (!req.session.isLoggedIn || !req.session.userId) return res.status(401).json({ error: errors.NOT_AUTHENTICATED() });
-    const user = await schemas.Users.findById(req.session.userId);
-    if (!user) return res.status(404).json({ error: errors.NOT_FOUND("account") });
+    if (!req.session.isLoggedIn || !req.session.userId) {
+        return res.status(401).json({ error: errors.NOT_AUTHENTICATED() });
+    }
+
+    const user = await schemas.Users.findById(req.session.userId).select("username");
+    if (!user) {
+        return res.status(404).json({ error: errors.NOT_FOUND("account") });
+    }
 
     req.user = user;
     next();

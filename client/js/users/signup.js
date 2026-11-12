@@ -1,7 +1,8 @@
 import showProfile from "@app/users/profile.js";
 import templates from "@app/templates.js";
 import {
-    getAuthError,
+    getLoginError,
+    getSignupError,
     toggleAuthButtons,
     handleAuthSuccess
 } from "@app/users/signup-helpers.js";
@@ -46,7 +47,7 @@ async function showLoginModal() {
             const username = $popup.find("#login-username").val().trim();
             const password = $popup.find("#login-password").val().trim();
 
-            const error = getAuthError(username, password);
+            const error = getLoginError(username, password);
             if (error) return Swal.showValidationMessage(error);
 
             return { username, password };
@@ -74,20 +75,22 @@ async function showSignUpModal() {
             const $popup = $(Swal.getPopup());
             $popup.find("#signup-username").attr("maxLength", config.USERNAME_MAX_LENGTH);
             $popup.find("#signup-password").attr("maxLength", config.PASSWORD_MAX_LENGTH);
+            $popup.find("#signup-email").attr("maxLength", config.EMAIL_MAX_LENGTH);
         },
 
         preConfirm: () => {
             const $popup = $(Swal.getPopup());
             const username = $popup.find("#signup-username").val().trim();
             const password = $popup.find("#signup-password").val().trim();
+            const email = $popup.find("#signup-email").val().trim();
 
-            const error = getAuthError(username, password);
+            const error = getSignupError(username, password, email);
             if (error) return Swal.showValidationMessage(error);
 
-            return { username, password };
+            return { username, password, email };
         }
     });
-
+    
     if (!result.isConfirmed) return;
 
     const response = await sendRequest({

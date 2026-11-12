@@ -13,8 +13,7 @@ const baseTextBody = (field, label) => [
 
 const queryInt = (field, label) => query(field)
     .exists().withMessage(errors.VALIDATION.REQUIRED(`${label} value`))
-    .isInt({ min: 0, max: config.PAGINATION_MAX_SKIP }).withMessage(errors.VALIDATION.NON_NEGATIVE_INTEGER(label))
-    .withMessage(errors.VALIDATION.LENGTH_RANGE(label, 0, config.PAGINATION_MAX_SKIP));
+    .isInt({ min: 0, max: config.PAGINATION_MAX_SKIP }).withMessage(errors.VALIDATION.LENGTH_RANGE(label, 0, config.PAGINATION_MAX_SKIP));
 
 const mongoIdParam = (field, label) => param(field)
     .exists().withMessage(errors.VALIDATION.REQUIRED(label))
@@ -64,6 +63,15 @@ export const editCommentValidator = [mongoIdParam("id", "comment ID"), ...commen
 export const getCommentsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "post ID"), validate]
 export const getCommentValidator = [mongoIdParam("id", "comment ID"), validate]
 
-export const userAuthValidator = [...userValidator(), validate]
+export const loginValidator = [...userValidator(), validate]
 export const getUserProfileValidator = [mongoIdParam("id", "user ID"), validate]
 export const getUserPostsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "user ID"), validate]
+export const signupValidator = [
+    ...userValidator(),
+    ...baseTextBody("email", "Email"),
+    body("email")
+        .isLength({ max: config.EMAIL_MAX_LENGTH }).withMessage(errors.VALIDATION.MAX_LENGTH("Email", config.EMAIL_MAX_LENGTH))
+        .isEmail().withMessage(errors.VALIDATION.INVALID_FORMAT("email"))
+        .normalizeEmail(),
+    validate
+]
