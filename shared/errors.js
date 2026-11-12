@@ -30,7 +30,6 @@ export const errors = {
     VALIDATION: {
         STRING: (label) => formatLabel("{label} must be a string.", label),
         EMPTY: (label) => formatLabel("{label} cannot be empty.", label),
-        NON_NEGATIVE_INTEGER: (label) => formatLabel("{label} value must be a non-negative integer.", label),
         BOOLEAN: (label) => formatLabel("{label} value must be true or false.", label),
         INVALID_FORMAT: (label) => formatLabel("Invalid {label} format.", label),
         REQUIRED: (label) => formatLabel("{label} is required.", label),

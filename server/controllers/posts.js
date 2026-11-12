@@ -16,9 +16,7 @@ export async function likePost(req, res) {
                 $inc: {
                     likes: 1
                 }
-            }, {
-                session
-            });
+            }, { session });
 
             if (result.matchedCount === 0) {
                 throw new ClientError(errors.ACCESS_DENIED("post"), 404);
@@ -143,7 +141,7 @@ export async function createPost(req, res) {
 export async function getPost(req, res) {
     const id = req.data.id;
     const post = await schemas.Posts.findById(id)
-        .populate("by", "-password")
+        .populate("by", "-password -email")
         .lean();
 
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
@@ -156,7 +154,7 @@ export async function getPosts(req, res) {
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.POSTS_LIMIT)
-        .populate("by", "-password")
+        .populate("by", "-password -email")
         .lean();
 
     return res.status(200).json({ success: true, posts });
@@ -168,7 +166,7 @@ export async function getComments(req, res) {
         .skip(skip)
         .limit(config.COMMENTS_LIMIT)
         .sort({ createdAt: -1, _id: -1 })
-        .populate("by", "-password")
+        .populate("by", "-password -email")
         .lean();
 
     return res.status(200).json({ success: true, comments });

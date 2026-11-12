@@ -25,6 +25,7 @@ const templates = {
 <h2>Sign Up</h2>
 <input type="text" id="signup-username" placeholder="Username">
 <input type="password" id="signup-password" placeholder="Password">
+<input type="email" id="signup-email" placeholder="Email">
 <p class="text-swal-auth">
     Already have an account? <span class="link-swal-auth" role="button" tabindex="0" data-target="login">Log in</span>
 </p>

@@ -2,11 +2,26 @@ import mongoose from "mongoose";
 import config from "./config.js";
 
 const usersSchema = new mongoose.Schema({
-    username: { type: String, trim: true, required: true, lowercase: true, minLength: config.USERNAME_MIN_LENGTH, maxLength: config.USERNAME_MAX_LENGTH },
-    password: { type: String, required: true }
+    password: { type: String, required: true },
+    email: {
+        type: String,
+        trim: true,
+        match: /.+\@.+\..+/,
+        required: true,
+        maxLength: config.EMAIL_MAX_LENGTH
+    },
+    username: {
+        type: String,
+        trim: true,
+        required: true,
+        lowercase: true,
+        minLength: config.USERNAME_MIN_LENGTH,
+        maxLength: config.USERNAME_MAX_LENGTH
+    }
 }, { timestamps: true });
 
 usersSchema.index({ username: 1 }, { unique: true });
+usersSchema.index({ email: 1 }, { unique: true });
 
 const likesSchema = new mongoose.Schema({
     by: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },

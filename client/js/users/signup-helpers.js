@@ -33,8 +33,19 @@ function validatePassword(password) {
     return null;
 }
 
-export function getAuthError(username, password) {
+function validateEmail(email) {
+    if (validator.isEmpty(email)) return errors.VALIDATION.REQUIRED("Email");
+    if (!validator.isEmail(email)) return errors.VALIDATION.INVALID_FORMAT("email");
+
+    return null;
+}
+
+export function getLoginError(username, password) {
     return validateUsername(username) || validatePassword(password);
+}
+
+export function getSignupError(username, password, email) {
+    return validateUsername(username) || validatePassword(password) || validateEmail(email);
 }
 
 export async function toggleAuthButtons() {

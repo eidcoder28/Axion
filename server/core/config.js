@@ -20,6 +20,6 @@ const config = {
     SESSION_SECRET: SESSION_SECRET,
     PORT: parseInt(PORT),
     PRODUCTION:  PRODUCTION === "production"
-};
+}
 
 export default config;
