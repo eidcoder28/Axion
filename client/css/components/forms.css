@@ -57,8 +57,9 @@ button:hover {
     background-color: var(--color-ink);
 }
 
-button:disabled {
+button:disabled, .disabled {
     opacity: 0.55;
+    transition: opacity 0.3s ease;
     cursor: not-allowed;
 }
 

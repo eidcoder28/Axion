@@ -20,11 +20,16 @@ async function getComments(state = {}) {
 async function renderComments(state = {}, preFetchedResponse = null) {
     const response = preFetchedResponse || await getComments(state);
     if (response && !response.success) return Alert.error({ text: response.error });
-
+    
     $(state.container).empty();
 
+    const $popup = $(Swal.getPopup());
+    const hasComments = Array.isArray(response?.comments) && response.comments.length > 0;
+    $popup.find("#comments-prev-btn").prop("disabled", state.skip <= 0);
+    $popup.find("#comments-next-btn").prop("disabled", !hasComments);
+
     // No data :/
-    if (!Array.isArray(response?.comments) || response.comments.length <= 0) {
+    if (!hasComments) {
         $("<div>")
             .addClass("state-nothing-found")
             .html("<b>No comments yet.</b>")

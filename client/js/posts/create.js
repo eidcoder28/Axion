@@ -6,7 +6,7 @@ const createPostBtn = $("#create-post-btn");
 const postsNavigationContainer = $("#posts-navigation-container");
 
 createPostBtn.on("click", lockEvent(async function () {
-    const instance = new PostEditor("Create post", {});
+    const instance = new PostEditor("Create post");
     const result = await instance.open();
     if (!result.isConfirmed) return;
 
@@ -22,18 +22,21 @@ createPostBtn.on("click", lockEvent(async function () {
 
 if (!postsState.customPostId) {
     $("<button>")
+        .attr("id", "posts-prev-btn")
+        .prop("disabled", true)
         .html("<i class='fas fa-chevron-left'></i> Prev")
         .on("click", lockEvent(async () => {
             if (postsState.skip <= 0) return;
+
             postsState.skip -= config.POSTS_LIMIT;
             await getPosts();
         }))
         .appendTo(postsNavigationContainer);
 
     $("<button>")
-        .html("<i class='fas fa-chevron-right'></i> Next")
+        .attr("id", "posts-next-btn")
+        .html("Next <i class='fas fa-chevron-right'></i>")
         .on("click", lockEvent(async () => {
-            if ($("#posts-container").find(".state-nothing-found").length) return;
             if (postsState.skip + config.POSTS_LIMIT > config.PAGINATION_MAX_SKIP) return;
 
             postsState.skip += config.POSTS_LIMIT;

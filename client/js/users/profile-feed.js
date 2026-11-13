@@ -7,7 +7,8 @@ import {
     $,
     capitalize,
     lockEvent,
-    Alert
+    Alert,
+    Swal
 } from "@app/utils.js";
 
 export async function getProfilePosts(userId, skip) {
@@ -21,10 +22,14 @@ export async function getProfilePosts(userId, skip) {
 export async function renderProfilePosts(state = {}, preFetchedResponse = null) {
     const response = preFetchedResponse || await getProfilePosts(state.user.id, state.skip);
     if (response && !response.success) return Alert.error({ text: response.error });
-
     $(state.container).empty();
+    const $popup = $(Swal.getPopup());
 
-    if (!Array.isArray(response?.posts) || response.posts.length <= 0) {
+    const hasPosts = Array.isArray(response?.posts) && response.posts.length > 0;
+    $popup.find("#profile-posts-prev-btn").prop("disabled", state.skip <= 0);
+    $popup.find("#profile-posts-next-btn").prop("disabled", !hasPosts);
+
+    if (!hasPosts) {
         $("<div>")
             .addClass("state-nothing-found")
             .html("<b>No posts yet.</b>")

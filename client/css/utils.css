@@ -54,12 +54,6 @@
     color: var(--color-accent);
 }
 
-[inert] {
-    opacity: 0.55;
-    transition: opacity 0.3s ease;
-    cursor: not-allowed;
-}
-
 ::-webkit-scrollbar {
     width: 8px;
     height: 8px;
