@@ -8,7 +8,7 @@ const templates = {
   POST_COMMENTS: () => `
 <div id="comments-container" class="scroll-container"></div>
 <div class="center">
-  <button id="comments-prev-btn"><i class="fas fa-caret-left"></i></button>
+  <button id="comments-prev-btn" disabled><i class="fas fa-caret-left"></i></button>
   <button id="comments-next-btn"><i class="fas fa-caret-right"></i></button>
 </div>`,
 
@@ -40,7 +40,7 @@ const templates = {
 </div>
 
 <div class="center" style="margin-top: 10px">
-  <button id="profile-posts-prev-btn">
+  <button id="profile-posts-prev-btn" disabled>
     <i class="fas fa-caret-left"></i>
   </button>
   <button id="profile-posts-next-btn">

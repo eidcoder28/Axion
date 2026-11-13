@@ -23,6 +23,11 @@ export async function renderPosts(posts = []) {
     const postsContainer = $("#posts-container");
     postsContainer.empty();
 
+    const hasPosts = Array.isArray(posts) && posts.length > 0;
+
+    $("#posts-prev-btn").prop("disabled", postsState.skip <= 0);
+    $("#posts-next-btn").prop("disabled", !hasPosts);
+
     if (!Array.isArray(posts) || posts.length <= 0) {
         $("<div>")
             .addClass("state-nothing-found")
@@ -123,7 +128,7 @@ export async function getPosts(postId = null) {
             `/api/v1/posts/${postId}` :
             `/api/v1/posts/?skip=${postsState.skip}`,
     });
-    
+
     if (!data.success) return Alert.error({ text: data.error });
     renderPosts(data.posts);
 }

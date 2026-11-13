@@ -49,7 +49,6 @@ export default async function showProfile(id) {
             }));
 
             $popup.find("#profile-posts-next-btn").on("click", lockEvent(async function () {
-                if ($(state.container).find(".state-nothing-found").length) return;
                 if (state.skip + config.USER_POSTS_LIMIT > config.PAGINATION_MAX_SKIP) return;
                 if (!$(state.container).find("#profile-load-posts-btn").length) {
                     state.skip += config.USER_POSTS_LIMIT;
