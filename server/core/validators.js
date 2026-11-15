@@ -4,55 +4,49 @@ import config from "./config.js";
 import errors from "../../shared/errors.js";
 
 // Helpers
-const baseTextBody = (field, label) => [
-    body(field).exists().withMessage(errors.VALIDATION.REQUIRED(label)),
-    body(field).isString().withMessage(errors.VALIDATION.STRING(label)),
-    body(field).trim(),
-    body(field).notEmpty().withMessage(errors.VALIDATION.EMPTY(label))
-]
+const baseTextBody = (field, label) => body(field)
+    .exists().withMessage(errors.VALIDATION.REQUIRED(label)).bail()
+    .isString().withMessage(errors.VALIDATION.STRING(label)).bail()
+    .trim()
+    .notEmpty().withMessage(errors.VALIDATION.EMPTY(label)).bail();
 
 const queryInt = (field, label) => query(field)
-    .exists().withMessage(errors.VALIDATION.REQUIRED(`${label} value`))
-    .isInt({ min: 0, max: config.PAGINATION_MAX_SKIP }).withMessage(errors.VALIDATION.LENGTH_RANGE(label, 0, config.PAGINATION_MAX_SKIP));
+    .exists().withMessage(errors.VALIDATION.REQUIRED(`${label} value`)).bail()
+    .isInt({ min: 0, max: config.PAGINATION_MAX_SKIP }).withMessage(errors.VALIDATION.LENGTH_RANGE(label, 0, config.PAGINATION_MAX_SKIP))
+    .toInt();
 
 const mongoIdParam = (field, label) => param(field)
-    .exists().withMessage(errors.VALIDATION.REQUIRED(label))
+    .exists().withMessage(errors.VALIDATION.REQUIRED(label)).bail()
     .isMongoId().withMessage(errors.VALIDATION.INVALID_FORMAT(label));
 
 const userValidator = () => [
-    ...baseTextBody("username", "username"),
-    body("username")
+    baseTextBody("username", "username")
         .isLength({ min: config.USERNAME_MIN_LENGTH, max: config.USERNAME_MAX_LENGTH })
-        .withMessage(errors.VALIDATION.LENGTH_RANGE("username", config.USERNAME_MIN_LENGTH, config.USERNAME_MAX_LENGTH)),
-    body("username").toLowerCase(),
+        .withMessage(errors.VALIDATION.LENGTH_RANGE("username", config.USERNAME_MIN_LENGTH, config.USERNAME_MAX_LENGTH))
+        .toLowerCase(),
 
-    ...baseTextBody("password", "password"),
-    body("password")
+    baseTextBody("password", "password")
         .isLength({ min: config.PASSWORD_MIN_LENGTH, max: config.PASSWORD_MAX_LENGTH })
         .withMessage(errors.VALIDATION.LENGTH_RANGE("password", config.PASSWORD_MIN_LENGTH, config.PASSWORD_MAX_LENGTH))
 ]
 
 const postValidator = () => [
-    ...baseTextBody("title", "post title"),
-    body("title")
+    baseTextBody("title", "post title")
         .isLength({ max: config.POST_TITLE_MAX_LENGTH })
         .withMessage(errors.VALIDATION.MAX_LENGTH("post title", config.POST_TITLE_MAX_LENGTH)),
 
-    ...baseTextBody("content", "post content"),
-    body("content")
+    baseTextBody("content", "post content")
         .isLength({ max: config.POST_CONTENT_MAX_LENGTH })
         .withMessage(errors.VALIDATION.MAX_LENGTH("post content", config.POST_CONTENT_MAX_LENGTH))
 ]
 
 const commentValidator = () => [
-    ...baseTextBody("content", "content"),
-    body("content")
+    baseTextBody("content", "content")
         .isLength({ max: config.COMMENTS_MAX_LENGTH })
         .withMessage(errors.VALIDATION.MAX_LENGTH("content", config.COMMENTS_MAX_LENGTH))
 ]
 
 // Validators
-
 export const createPostsValidator = [...postValidator(), validate]
 export const editPostsValidator = [mongoIdParam("id", "post ID"), ...postValidator(), validate]
 export const getPostsValidator = [queryInt("skip", "skip"), validate]
@@ -68,10 +62,9 @@ export const getUserProfileValidator = [mongoIdParam("id", "user ID"), validate]
 export const getUserPostsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "user ID"), validate]
 export const signupValidator = [
     ...userValidator(),
-    ...baseTextBody("email", "Email"),
-    body("email")
-        .isLength({ max: config.EMAIL_MAX_LENGTH }).withMessage(errors.VALIDATION.MAX_LENGTH("Email", config.EMAIL_MAX_LENGTH))
-        .isEmail().withMessage(errors.VALIDATION.INVALID_FORMAT("email"))
+    baseTextBody("email", "Email")
+        .isLength({ max: config.EMAIL_MAX_LENGTH }).withMessage(errors.VALIDATION.MAX_LENGTH("Email", config.EMAIL_MAX_LENGTH)).bail()
+        .isEmail().withMessage(errors.VALIDATION.INVALID_FORMAT("email")).bail()
         .normalizeEmail(),
     validate
 ]
