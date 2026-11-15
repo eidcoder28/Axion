@@ -8,7 +8,9 @@ import {
     quickInfo,
     $,
     Alert,
-    Swal
+    Swal,
+    toObject,
+    toString
 } from "@app/utils.js";
 
 async function getComments(state = {}) {
@@ -40,8 +42,8 @@ async function renderComments(state = {}, preFetchedResponse = null) {
     const fragment = new DocumentFragment();
 
     response.comments.forEach(comment => {
-        const safeComment = comment || {};
-        const safeBy = safeComment.by || {};
+        const safeComment = toObject(comment);
+        const safeBy = toObject(safeComment.by);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
@@ -92,7 +94,7 @@ async function renderComments(state = {}, preFetchedResponse = null) {
         }
 
         $("<p>")
-            .text(safeComment.content || "No content found")
+            .text(toString(safeComment.content) || "No content found")
             .appendTo(card);
 
         if (safeComment.editedAt) {

@@ -8,29 +8,35 @@ import config from "@shared/config.js";
 import errors from "@shared/errors.js";
 import Notiflix from "notiflix";
 
-export async function copy(str) {
-    if (typeof str !== "string" || !str) return;
+export const toObject = obj => Object.prototype.toString.call(obj) === "[object Object]" ? obj : {};
+export const toString = value => typeof value === "string" ? value.trim() : "";
+
+export async function copy(input) {
+    const text = toString(input);
+    if (!text) return;
 
     try {
-        await navigator.clipboard.writeText(str);
+        await navigator.clipboard.writeText(text);
         Alert.success({ text: "Copied!" });
     } catch {
         Alert.error({ text: errors.COPY_FAILED() });
     }
 }
 
-export function renderSafeHtml(html, parse = true) {
-    const rawHtml = html || "";
-    const code = parse ? marked.parse(rawHtml) : rawHtml;
+export function renderSafeHtml(input, parse = true) {
+    const raw = toString(input);
+    if (!raw) return "";
 
-    return DOMPurify.sanitize(code, {
+    const parsed = parse ? marked.parse(raw) : raw;
+    return DOMPurify.sanitize(parsed, {
         ALLOWED_TAGS: config.ALLOWED_TAGS,
         KEEP_CONTENT: false
     }).trim();
 }
 
 export function generatePostLink(postId) {
-    return `${window.location.origin}${window.location.pathname}?id=${postId || "POST_ID"}`;
+    const id = toString(postId) || "POST_ID";
+    return `${window.location.origin}${window.location.pathname}?id=${id}`;
 }
 
 export function lockEvent(fn) {
@@ -57,7 +63,8 @@ export function lockEvent(fn) {
     }
 }
 
-export async function sendRequest({ body, ...requestConfig }, showLoading = true) {
+export async function sendRequest(options = {}, showLoading = true) {
+    const { body, ...requestConfig } = toObject(options);
     if (showLoading) Notiflix.Loading.standard("Working on it...");
 
     try {
@@ -68,18 +75,20 @@ export async function sendRequest({ body, ...requestConfig }, showLoading = true
             credentials: "include"
         });
 
-        return response.data || {};
+        return toObject(response.data);
     } catch (err) {
         console.error(err);
-        return { error: response.data?.error || errors.UNEXPECTED_ERROR() };
+        return { error: toObject(err.response?.data).error || errors.UNEXPECTED_ERROR() };
     } finally {
         if (showLoading) Notiflix.Loading.remove();
     }
 }
 
-export function capitalize(str) {
-    if (typeof str !== "string" || !str) return "";
-    return (str.charAt(0).toUpperCase() + str.slice(1)).trim();
+export function capitalize(input) {
+    const text = toString(input);
+    if (!text) return "";
+
+    return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
 export async function input(config = {}) {
@@ -97,7 +106,7 @@ export let quickInfo = {};
 export async function initQuickInfo() {
     try {
         const data = await sendRequest({ url: "/api/v1/me/quick-info" }, false);
-        Object.assign(quickInfo, data || {});
+        Object.assign(quickInfo, toObject(data));
     } catch {
         Alert.error({ text: errors.UNEXPECTED_ERROR() });
     }
@@ -116,9 +125,9 @@ const BaseToast = Swal.mixin({
 });
 
 export const Alert = {
-    success: (config = {}) => BaseToast.fire({ icon: "success", title: "Success", ...config }),
-    error: (config = {}) => BaseToast.fire({ icon: "error", title: "Error", ...config }),
-    info: (config = {}) => BaseToast.fire({ icon: "info", title: "Info", ...config })
-}
+    success: options => BaseToast.fire({ icon: "success", title: "Success", ...toObject(options) }),
+    error: options => BaseToast.fire({ icon: "error", title: "Error", ...toObject(options) }),
+    info: options => BaseToast.fire({ icon: "info", title: "Info", ...toObject(options) })
+};
 
 export { $, config, Swal, validator };

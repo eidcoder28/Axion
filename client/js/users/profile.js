@@ -6,6 +6,7 @@ import {
     lockEvent,
     config,
     quickInfo,
+    toObject,
     $,
     Alert,
     Swal
@@ -18,14 +19,14 @@ export default async function showProfile(id) {
 
     if (!response.success) return Alert.error({ text: response.error });
 
-    const user = response.user || {};
+    const user = toObject(response.user);
     const state = {
         skip: 0,
         container: null,
         user: {
             username: capitalize(user.username) || "User",
             id: user._id,
-            me: user._id === quickInfo?._id
+            me: user._id && user._id === quickInfo?._id
         }
     }
 

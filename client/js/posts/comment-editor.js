@@ -1,12 +1,12 @@
-import { config, Swal, validator } from "@app/utils.js";
+import { config, Swal, validator, toString } from "@app/utils.js";
 import errors from "@shared/errors.js";
 
 export default class CommentEditor {
     #instance;
 
-    constructor(title = "Comment editor", initial = "") {
-        this.title = title;
-        this.initial = initial;
+    constructor(title, initial) {
+        this.title = toString(title) || "Comment editor";
+        this.initial = toString(initial);
         this.#instance = null;
     }
 

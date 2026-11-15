@@ -1,13 +1,13 @@
-import { config, $, Swal, validator } from "@app/utils.js";
+import { config, $, Swal, validator, toObject, toString } from "@app/utils.js";
 import templates from "@app/templates.js";
 import errors from "@shared/errors.js";
 
 export default class PostEditor {
     #instance;
 
-    constructor(title = "Post editor", initial = {}) {
-        this.title = title;
-        this.initial = initial;
+    constructor(title, initial) {
+        this.title = toString(title) || "Post editor";
+        this.initial = toObject(initial);
         this.#instance = null;
     }
 
@@ -21,11 +21,11 @@ export default class PostEditor {
                 const $popup = $(Swal.getPopup());
                 
                 $popup.find("#post-editor-title")
-                    .val(this.initial.title || "")
+                    .val(toString(this.initial.title))
                     .attr("maxLength", config.POST_TITLE_MAX_LENGTH);
 
                 $popup.find("#post-editor-content")
-                    .val(this.initial.content || "")
+                    .val(toString(this.initial.content))
                     .attr("maxLength", config.POST_CONTENT_MAX_LENGTH);
             },
 

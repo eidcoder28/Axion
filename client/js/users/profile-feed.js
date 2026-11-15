@@ -7,16 +7,15 @@ import {
     $,
     capitalize,
     lockEvent,
+    toObject,
     Alert,
     Swal
 } from "@app/utils.js";
 
 export async function getProfilePosts(userId, skip) {
-    const response = await sendRequest({
+    return await sendRequest({
         url: `/api/v1/users/${userId}/posts/?skip=${skip}`
     });
-
-    return response;
 }
 
 export async function renderProfilePosts(state = {}, preFetchedResponse = null) {
@@ -24,7 +23,6 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
     if (response && !response.success) return Alert.error({ text: response.error });
     $(state.container).empty();
     const $popup = $(Swal.getPopup());
-
     const hasPosts = Array.isArray(response?.posts) && response.posts.length > 0;
     $popup.find("#profile-posts-prev-btn").prop("disabled", state.skip <= 0);
     $popup.find("#profile-posts-next-btn").prop("disabled", !hasPosts);
@@ -40,7 +38,7 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
     const fragment = new DocumentFragment();
 
     response.posts.forEach(post => {
-        const safePost = post || {};
+        const safePost = toObject(post);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
@@ -52,19 +50,18 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
         $("<i>")
             .addClass("fas fa-link post-icon")
             .attr({ role: "button", tabindex: "0" })
-            .on("click", async function () {
+            .on("click", () => {
                 copy(generatePostLink(safePost._id));
             })
             .appendTo(header);
 
         $("<div>")
             .addClass("post-content")
-            .html(renderSafeHtml(safePost.content) || "Not content found")
+            .html(renderSafeHtml(safePost.content) || "No content found")
             .appendTo(card);
 
         if (state.user.me) {
-            const buttons = $("<div>").addClass("center-overflow");
-            card.append(buttons);
+            const buttons = $("<div>").addClass("center-overflow").appendTo(card);
 
             $("<button>")
                 .addClass("btn-danger w-full")
@@ -84,7 +81,7 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
                 .addClass("w-full")
                 .html("<i class='fas fa-edit'></i>")
                 .on("click", lockEvent(async function () {
-                    const instance = new PostEditor("Update post", post);
+                    const instance = new PostEditor("Update post", safePost);
                     const result = await instance.open();
                     if (!result.isConfirmed) return;
 
@@ -95,7 +92,7 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
                     });
 
                     if (!response.success) return Alert.error({ text: response.error });
-                    if (!response.changed) return Alert.info({ text: "No changed were made!" });
+                    if (!response.changed) return Alert.info({ text: "No changes were made!" });
                     
                     Alert.success({ text: "Post updated!" });
                 }))

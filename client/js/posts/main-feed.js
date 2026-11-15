@@ -7,6 +7,7 @@ import {
     renderSafeHtml,
     generatePostLink,
     lockEvent,
+    toObject,
     copy,
     $,
     Alert
@@ -24,11 +25,10 @@ export async function renderPosts(posts = []) {
     postsContainer.empty();
 
     const hasPosts = Array.isArray(posts) && posts.length > 0;
-
     $("#posts-prev-btn").prop("disabled", postsState.skip <= 0);
     $("#posts-next-btn").prop("disabled", !hasPosts);
 
-    if (!Array.isArray(posts) || posts.length <= 0) {
+    if (!hasPosts) {
         $("<div>")
             .addClass("state-nothing-found")
             .html("<b>No posts found!</b>")
@@ -39,8 +39,8 @@ export async function renderPosts(posts = []) {
     const fragment = new DocumentFragment();
 
     posts.forEach(post => {
-        const safePost = post || {};
-        const safeBy = safePost.by || {};
+        const safePost = toObject(post);
+        const safeBy = toObject(safePost.by);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
@@ -52,7 +52,7 @@ export async function renderPosts(posts = []) {
         $("<i>")
             .addClass("fas fa-link post-icon")
             .attr({ role: "button", tabindex: "0" })
-            .on("click", async function () {
+            .on("click", () => {
                 copy(generatePostLink(safePost._id));
             })
             .appendTo(header);
@@ -67,13 +67,10 @@ export async function renderPosts(posts = []) {
             .attr("role", "button")
             .attr("tabindex", "0")
             .text(`Created by: ${capitalize(safeBy.username) || "Someone"}`)
-            .on("click", lockEvent(async function () {
-                await showProfile(safeBy._id);
-            }))
+            .on("click", lockEvent(() => showProfile(safeBy._id)))
             .appendTo(card);
 
-        const reactions = $("<div>").addClass("reactions-container");
-        card.append(reactions);
+        const reactions = $("<div>").addClass("reactions-container").appendTo(card);
         const likes = Number(safePost.likes) || 0;
 
         $("<button>")
@@ -93,14 +90,14 @@ export async function renderPosts(posts = []) {
 
         $("<button>")
             .html(`<i class="fas fa-comments"></i>`)
-            .on("click", lockEvent(async function () {
-                await showComments(safePost._id);
+            .on("click", lockEvent(() => {
+                return showComments(safePost._id);
             }))
             .appendTo(reactions);
 
         $("<button>")
             .html(`<i class="fas fa-comment-medical"></i>`)
-            .on("click", lockEvent(async function () {
+            .on("click", lockEvent(async () => {
                 const instance = new CommentEditor("Add comment");
                 const result = await instance.open();
                 if (!result.isConfirmed) return;
@@ -108,9 +105,7 @@ export async function renderPosts(posts = []) {
                 const response = await sendRequest({
                     url: `/api/v1/posts/${safePost._id}/comments`,
                     method: "POST",
-                    body: {
-                        content: result.value
-                    }
+                    body: { content: result.value }
                 });
 
                 if (!response.success) return Alert.error({ text: response.error });
@@ -124,9 +119,7 @@ export async function renderPosts(posts = []) {
 
 export async function getPosts(postId = null) {
     const data = await sendRequest({
-        url: postId ?
-            `/api/v1/posts/${postId}` :
-            `/api/v1/posts/?skip=${postsState.skip}`,
+        url: postId ? `/api/v1/posts/${postId}` : `/api/v1/posts/?skip=${postsState.skip}`
     });
 
     if (!data.success) return Alert.error({ text: data.error });
