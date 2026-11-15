@@ -120,8 +120,14 @@ export async function updateComment(req, res) {
 
 export async function deleteComment(req, res) {
     const id = req.data.id;
-    const result = await schemas.Comments.deleteOne({ _id: id, by: req.session.userId });
-    if (result.deletedCount === 0) return res.status(404).json({ error: errors.ACCESS_DENIED("comment") });
+    const result = await schemas.Comments.deleteOne({
+        _id: id,
+        by: req.session.userId
+    });
+
+    if (result.deletedCount === 0) {
+        return res.status(404).json({ error: errors.ACCESS_DENIED("comment") });
+    }
 
     return res.status(200).json({ success: true });
 }
