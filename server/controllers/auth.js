@@ -2,22 +2,21 @@ import bcrypt from "bcrypt";
 import schemas from "../core/schemas.js";
 import config from "../core/config.js";
 import errors from "../../shared/errors.js";
+import { initSession } from "../core/utils.js";
+
+const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8.6J6W9Q/1R5yB9qH2q/9wQ5v4X3eO";
 
 export async function login(req, res) {
     const { username, password } = req.data;
     const user = await schemas.Users.findOne({ username }).select("password").lean();
+    const hash = user ? user.password : DUMMY_HASH;
+    const isMatch = await bcrypt.compare(password, hash);
 
-    if (!user || !(await bcrypt.compare(password, user.password))) {
+    if (!user || !isMatch) {
         return res.status(401).json({ error: errors.INVALID_CREDENTIALS() });
     }
 
-    req.session.isLoggedIn = true;
-    req.session.userId = user._id;
-
-    await new Promise((resolve, reject) => {
-        req.session.save((err) => err ? reject(errors.SESSION_INITIALIZATION_FAILED()) : resolve());
-    });
-
+    await initSession(req, user._id);
     return res.status(200).json({ success: true });
 }
 
@@ -26,13 +25,7 @@ export async function signup(req, res) {
     const hashed = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
     const user = await schemas.Users.create({ username, email, password: hashed });
 
-    req.session.isLoggedIn = true;
-    req.session.userId = user._id;
-
-    await new Promise((resolve, reject) => {
-        req.session.save((err) => err ? reject(errors.SESSION_INITIALIZATION_FAILED()) : resolve());
-    });
-
+    await initSession(req, user._id);
     return res.status(201).json({ success: true });
 }
 
@@ -79,5 +72,5 @@ export function getQuickInfo(req, res) {
 }
 
 export function getStatus(req, res) {
-    return res.status(200).json({ success: true, isLoggedIn: req.session.isLoggedIn });
+    return res.status(200).json({ success: true, loggedIn: req.session.loggedIn });
 }

@@ -14,7 +14,7 @@ const formatLabel = (template, label) => {
 export const errors = {
     INVALID_CREDENTIALS: () => "Invalid username or password.",
     NOT_AUTHENTICATED: () => "You are not logged in.",
-    SESSION_INITIALIZATION_FAILED: () => "Session initialization failed.",
+    SESSION_INIT_FAILED: () => "Session initialization failed.",
     SESSION_DESTROY_FAILED: () => "Failed to destroy session.",
     ACCOUNT_NOT_FOUND: () => "We can't find your account right now.",
     COPY_FAILED: () => "Failed to copy.",

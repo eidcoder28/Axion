@@ -11,30 +11,25 @@ import {
 const loggedInGroup = $("#auth-buttons");
 const signUpBtn = $("#signup-btn");
 
-function validateUsername(username) {
-    const USERNAME_MIN_LENGTH = config.USERNAME_MIN_LENGTH;
-
-    if (validator.isEmpty(username)) return errors.VALIDATION.REQUIRED("username");
-    if (!validator.isLength(username, { min: USERNAME_MIN_LENGTH })) {
-        return errors.VALIDATION.MIN_LENGTH("username", USERNAME_MIN_LENGTH);
+function validateMinLength(value, fieldName, minLength) {
+    if (validator.isEmpty(value)) return errors.VALIDATION.REQUIRED(fieldName);
+    if (!validator.isLength(value, { min: minLength })) {
+        return errors.VALIDATION.MIN_LENGTH(fieldName, minLength);
     }
 
     return null;
+}
+
+function validateUsername(username) {
+    return validateMinLength(username, "username", config.USERNAME_MIN_LENGTH);
 }
 
 function validatePassword(password) {
-    const PASSWORD_MIN_LENGTH = config.PASSWORD_MIN_LENGTH;
-
-    if (validator.isEmpty(password)) return errors.VALIDATION.REQUIRED("password");
-    if (!validator.isLength(password, { min: PASSWORD_MIN_LENGTH })) {
-        return errors.VALIDATION.MIN_LENGTH("password", PASSWORD_MIN_LENGTH);
-    }
-
-    return null;
+    return validateMinLength(password, "password", config.PASSWORD_MIN_LENGTH);
 }
 
 function validateEmail(email) {
-    if (validator.isEmpty(email)) return errors.VALIDATION.REQUIRED("Email");
+    if (validator.isEmpty(email)) return errors.VALIDATION.REQUIRED("email");
     if (!validator.isEmail(email)) return errors.VALIDATION.INVALID_FORMAT("email");
 
     return null;
@@ -53,13 +48,12 @@ export async function toggleAuthButtons() {
         url: "/api/v1/me/status"
     });
 
-    const isLoggedIn = !!status.isLoggedIn;
-    signUpBtn.toggle(!isLoggedIn);
-    loggedInGroup.toggle(isLoggedIn);
+    const loggedIn = !!status.loggedIn;
+    signUpBtn.toggle(!loggedIn);
+    loggedInGroup.toggle(loggedIn);
 }
 
 export async function handleAuthSuccess(msg) {
     Alert.success({ text: msg });
-    await toggleAuthButtons();
-    await initQuickInfo();
+    await Promise.all([toggleAuthButtons(), initQuickInfo()]);
 }
