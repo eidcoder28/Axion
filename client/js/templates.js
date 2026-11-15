@@ -13,7 +13,6 @@ const templates = {
 </div>`,
 
   USER_LOGIN: () => `
-<h2>Login</h2>
 <input type="text" id="login-username" placeholder="Username">
 <input type="password" id="login-password" placeholder="Password">
 <p class="text-swal-auth">
@@ -22,7 +21,6 @@ const templates = {
 `,
 
   USER_SIGNUP: () => `
-<h2>Sign Up</h2>
 <input type="text" id="signup-username" placeholder="Username">
 <input type="password" id="signup-password" placeholder="Password">
 <input type="email" id="signup-email" placeholder="Email">

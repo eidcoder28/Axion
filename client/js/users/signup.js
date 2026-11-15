@@ -11,114 +11,92 @@ import {
     lockEvent,
     config,
     quickInfo,
+    toObject,
     $,
     Alert,
     Swal
 } from "@app/utils.js";
 
-const signUpBtn = $("#signup-btn");
-const signOutBtn = $("#signout-btn");
-const profileBtn = $("#profile-btn");
+const authConfig = {
+    login: {
+        html: templates.USER_LOGIN,
+        endpoint: "/api/v1/auth/login",
+        successMsg: "Logged in successfully!",
+        fields: [
+            { key: "username", selector: "#login-username", max: config.USERNAME_MAX_LENGTH },
+            { key: "password", selector: "#login-password", max: config.PASSWORD_MAX_LENGTH }
+        ],
+        title: "Login",
+        validate: ({ username, password }) => getLoginError(username, password)
+    },
+    signup: {
+        html: templates.USER_SIGNUP,
+        endpoint: "/api/v1/auth/signup",
+        successMsg: "Account created successfully!",
+        fields: [
+            { key: "username", selector: "#signup-username", max: config.USERNAME_MAX_LENGTH },
+            { key: "password", selector: "#signup-password", max: config.PASSWORD_MAX_LENGTH },
+            { key: "email", selector: "#signup-email", max: config.EMAIL_MAX_LENGTH }
+        ],
+        title: "Signup",
+        validate: ({ username, password, email }) => getSignupError(username, password, email)
+    }
+};
 
-const modalRoutes = {
-    "login": showLoginModal,
-    "signup": showSignUpModal
-}
+async function openAuthModal(type = "signup") {
+    const cfg = toObject(authConfig[type]);
+    if (typeof cfg.html !== "function" || !cfg.title) return;
 
-$(document).on("click", ".link-swal-auth", function () {
-    const target = $(this).data("target");
-    if (modalRoutes[target]) modalRoutes[target]();
-});
-
-async function showLoginModal() {
     const result = await Swal.fire({
-        html: templates.USER_LOGIN(),
+        html: cfg.html(),
+        title: cfg.title,
         stopKeydownPropagation: false,
         showCancelButton: true,
         confirmButtonText: "Submit",
         cancelButtonText: "Cancel",
         didOpen: () => {
             const $popup = $(Swal.getPopup());
-            $popup.find("#login-username").attr("maxLength", config.USERNAME_MAX_LENGTH);
-            $popup.find("#login-password").attr("maxLength", config.PASSWORD_MAX_LENGTH);
+            cfg.fields.forEach(field => $popup.find(field.selector).attr("maxLength", field.max));
         },
         preConfirm: () => {
             const $popup = $(Swal.getPopup());
-            const username = $popup.find("#login-username").val().trim();
-            const password = $popup.find("#login-password").val().trim();
-
-            const error = getLoginError(username, password);
-            if (error) return Swal.showValidationMessage(error);
-
-            return { username, password };
+            const values = Object.fromEntries(
+                cfg.fields.map(field => [field.key, $popup.find(field.selector).val().trim()])
+            );
+            const error = cfg.validate(values);
+            return error ? Swal.showValidationMessage(error) : values;
         }
     });
 
     if (!result.isConfirmed) return;
 
     const response = await sendRequest({
-        url: "/api/v1/auth/login",
+        url: cfg.endpoint,
         method: "POST",
         body: result.value
     });
 
     if (!response.success) return Alert.error({ text: response.error });
-    await handleAuthSuccess("Logged in successfully!");
+    await handleAuthSuccess(cfg.successMsg);
 }
 
-async function showSignUpModal() {
-    const result = await Swal.fire({
-        html: templates.USER_SIGNUP(),
-        stopKeydownPropagation: false,
-        showCancelButton: true,
-        didOpen: () => {
-            const $popup = $(Swal.getPopup());
-            $popup.find("#signup-username").attr("maxLength", config.USERNAME_MAX_LENGTH);
-            $popup.find("#signup-password").attr("maxLength", config.PASSWORD_MAX_LENGTH);
-            $popup.find("#signup-email").attr("maxLength", config.EMAIL_MAX_LENGTH);
-        },
+$(document).on("click", ".link-swal-auth", function () {
+    openAuthModal($(this).data("target"));
+});
 
-        preConfirm: () => {
-            const $popup = $(Swal.getPopup());
-            const username = $popup.find("#signup-username").val().trim();
-            const password = $popup.find("#signup-password").val().trim();
-            const email = $popup.find("#signup-email").val().trim();
-
-            const error = getSignupError(username, password, email);
-            if (error) return Swal.showValidationMessage(error);
-
-            return { username, password, email };
-        }
-    });
-    
-    if (!result.isConfirmed) return;
-
-    const response = await sendRequest({
-        url: "/api/v1/auth/signup",
-        method: "POST",
-        body: result.value
-    });
-
-    if (!response.success) return Alert.error({ text: response.error });
-    await handleAuthSuccess("Account created successfully!");
-}
-
-signUpBtn.on("click", lockEvent(async function () {
-    await showSignUpModal();
+$("#signup-btn").on("click", lockEvent(() => {
+    return openAuthModal();
 }));
 
-signOutBtn.on("click", lockEvent(async function () {
-    const response = await sendRequest({
-        url: "/api/v1/auth/signout",
-        method: "DELETE"
-    });
-
+$("#signout-btn").on("click", lockEvent(async () => {
+    const response = await sendRequest({ url: "/api/v1/auth/signout", method: "DELETE" });
     if (!response.success) return Alert.error({ text: response.error });
+
     await handleAuthSuccess("You have been logged out!");
 }));
 
-profileBtn.on("click", lockEvent(async function () {
-    await showProfile(quickInfo?._id);
+$("#profile-btn").on("click", lockEvent(() => {
+    return showProfile(quickInfo?._id);
 }));
 
 toggleAuthButtons();
