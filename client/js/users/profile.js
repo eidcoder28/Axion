@@ -1,5 +1,5 @@
 import templates from "@app/templates.js";
-import { renderProfilePosts } from "@app/users/profile-feed.js";
+import { bindProfilePostEvents, renderProfilePosts } from "@app/users/profile-feed.js";
 import {
     sendRequest,
     capitalize,
@@ -23,6 +23,7 @@ export default async function showProfile(id) {
     const state = {
         skip: 0,
         container: null,
+        items: new Map(),
         user: {
             username: capitalize(user.username) || "User",
             id: user._id,
@@ -38,7 +39,7 @@ export default async function showProfile(id) {
         didOpen: () => {
             const $popup = $(Swal.getPopup());
             state.container = $popup.find("#user-posts-container");
-            
+
             $popup.find("#profile-load-posts-btn").on("click", lockEvent(async function () {
                 await renderProfilePosts(state);
             }));
@@ -57,6 +58,8 @@ export default async function showProfile(id) {
                 
                 await renderProfilePosts(state);
             }));
+
+            bindProfilePostEvents($popup, state);
         }
     });
 }

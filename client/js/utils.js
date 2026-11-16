@@ -41,14 +41,11 @@ export function generatePostLink(postId) {
 
 export function lockEvent(fn) {
     if (typeof fn !== "function") return;
-    let isLocked = false;
 
     return async function (e) {
-        if (isLocked) return;
-        isLocked = true;
-
         const el = $(e.currentTarget);
-        el.addClass("disabled");
+        if (el.data("locked")) return;
+        el.data("locked", true).addClass("disabled");
 
         try {
             await fn.call(this, e);
@@ -57,8 +54,7 @@ export function lockEvent(fn) {
             console.error(err);
             Alert.error({ text: errors.UNEXPECTED_ERROR() });
         } finally {
-            el.removeClass("disabled");
-            isLocked = false;
+            el.data("locked", false).removeClass("disabled");
         }
     }
 }

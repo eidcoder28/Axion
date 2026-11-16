@@ -14,14 +14,61 @@ import {
 } from "@app/utils.js";
 
 const query = new URLSearchParams(window.location.search);
+const postsMap = new Map();
+const postsContainer = $("#posts-container");
 
 export const postsState = {
     skip: 0,
     customPostId: query.get("id")
 }
 
+postsContainer.on("click", ".post-share-btn", lockEvent(function () {
+    const post = postsMap.get(this.dataset.id);
+    return copy(generatePostLink(post._id));
+}));
+
+postsContainer.on("click", ".post-author", lockEvent(function () {
+    const post = postsMap.get(this.dataset.id);
+    return showProfile(toObject(post.by)._id);
+}));
+
+postsContainer.on("click", ".post-like-btn", lockEvent(async function () {
+    const post = postsMap.get(this.dataset.id);
+    const response = await sendRequest({
+        url: `/api/v1/posts/${post._id}/like`,
+        method: "POST"
+    });
+
+    if (response.error) return Alert.error({ text: response.error });
+
+    const $likesCount = $(this).find(".likes-count");
+    $likesCount.text((Number($likesCount.text()) || 0) + 1);
+    Alert.success({ text: "Post liked!" });
+}));
+
+postsContainer.on("click", ".post-comments-btn", lockEvent(function () {
+    const post = postsMap.get(this.dataset.id);
+    return showComments(post._id);
+}));
+
+postsContainer.on("click", ".post-add-comment-btn", lockEvent(async function () {
+    const post = postsMap.get(this.dataset.id);
+    const instance = new CommentEditor("Add comment");
+    const result = await instance.open();
+    if (!result.isConfirmed) return;
+
+    const response = await sendRequest({
+        url: `/api/v1/posts/${post._id}/comments`,
+        method: "POST",
+        body: { content: result.value }
+    });
+
+    if (!response.success) return Alert.error({ text: response.error });
+    Alert.success({ text: "Comment added!" });
+}));
+
 export async function renderPosts(posts = []) {
-    const postsContainer = $("#posts-container");
+    postsMap.clear();
     postsContainer.empty();
 
     const hasPosts = Array.isArray(posts) && posts.length > 0;
@@ -40,6 +87,7 @@ export async function renderPosts(posts = []) {
 
     posts.forEach(post => {
         const safePost = toObject(post);
+        postsMap.set(safePost._id, safePost);
         const safeBy = toObject(safePost.by);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
@@ -50,11 +98,8 @@ export async function renderPosts(posts = []) {
             .appendTo(header);
 
         $("<i>")
-            .addClass("fas fa-link post-icon")
-            .attr({ role: "button", tabindex: "0" })
-            .on("click", () => {
-                copy(generatePostLink(safePost._id));
-            })
+            .addClass("fas fa-link post-icon post-share-btn")
+            .attr({ role: "button", tabindex: "0", "data-id": safePost._id })
             .appendTo(header);
 
         $("<div>")
@@ -63,54 +108,31 @@ export async function renderPosts(posts = []) {
             .appendTo(card);
 
         $("<p>")
+            .addClass("post-author")
             .css({ color: "red", cursor: "pointer" })
-            .attr("role", "button")
-            .attr("tabindex", "0")
+            .attr({ role: "button", tabindex: "0", "data-id": safePost._id })
             .text(`Created by: ${capitalize(safeBy.username) || "Someone"}`)
-            .on("click", lockEvent(() => showProfile(safeBy._id)))
             .appendTo(card);
 
         const reactions = $("<div>").addClass("reactions-container").appendTo(card);
         const likes = Number(safePost.likes) || 0;
 
         $("<button>")
+            .addClass("post-like-btn")
+            .attr("data-id", safePost._id)
             .html(`<i class="fas fa-thumbs-up"></i> <span class="likes-count">${likes}</span>`)
-            .on("click", lockEvent(async function () {
-                const likesResponse = await sendRequest({
-                    url: `/api/v1/posts/${safePost._id}/like`,
-                    method: "POST"
-                });
-
-                if (likesResponse.error) return Alert.error({ text: likesResponse.error });
-
-                $(this).find(".likes-count").text(likes + 1);
-                Alert.success({ text: "Post liked!" });
-            }))
             .appendTo(reactions);
 
         $("<button>")
+            .addClass("post-comments-btn")
+            .attr("data-id", safePost._id)
             .html(`<i class="fas fa-comments"></i>`)
-            .on("click", lockEvent(() => {
-                return showComments(safePost._id);
-            }))
             .appendTo(reactions);
 
         $("<button>")
+            .addClass("post-add-comment-btn")
+            .attr("data-id", safePost._id)
             .html(`<i class="fas fa-comment-medical"></i>`)
-            .on("click", lockEvent(async () => {
-                const instance = new CommentEditor("Add comment");
-                const result = await instance.open();
-                if (!result.isConfirmed) return;
-
-                const response = await sendRequest({
-                    url: `/api/v1/posts/${safePost._id}/comments`,
-                    method: "POST",
-                    body: { content: result.value }
-                });
-
-                if (!response.success) return Alert.error({ text: response.error });
-                Alert.success({ text: "Comment added!" });
-            }))
             .appendTo(reactions);
     });
 

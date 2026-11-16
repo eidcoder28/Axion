@@ -22,7 +22,8 @@ async function getComments(state = {}) {
 async function renderComments(state = {}, preFetchedResponse = null) {
     const response = preFetchedResponse || await getComments(state);
     if (response && !response.success) return Alert.error({ text: response.error });
-    
+
+    state.items.clear();
     $(state.container).empty();
 
     const $popup = $(Swal.getPopup());
@@ -46,6 +47,8 @@ async function renderComments(state = {}, preFetchedResponse = null) {
         const safeBy = toObject(safeComment.by);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
+        
+        state.items.set(safeComment._id, safeComment);
 
         $("<h3>")
             .addClass("overflow")
@@ -56,40 +59,17 @@ async function renderComments(state = {}, preFetchedResponse = null) {
             const buttons = $("<div>").addClass("center").appendTo(header);
 
             $("<i>")
-                .addClass("fas fa-pen-to-square icon-helper")
-                .attr({ role: "button", tabindex: "0" })
-                .on("click", lockEvent(async function () {
-                    const instance = new CommentEditor("Edit comment", safeComment.content);
-                    const result = await instance.open();
-                    if (!result.isConfirmed) return;
-
-                    const response = await sendRequest({
-                        url: `/api/v1/comments/${safeComment._id}/update`,
-                        method: "PUT",
-                        body: {
-                            content: result.value
-                        }
-                    });
-
-                    if (!response.success) return Alert.error({ text: response.error });
-                    if (!response.changed) return Alert.info({ text: "No changes were made!" });
-
-                    Alert.success({ text: "Comment updated!" });
-                }))
+                .addClass("fas fa-pen-to-square icon-helper comment-edit-btn")
+                .attr({
+                    role: "button",
+                    tabindex: "0",
+                    "data-id": safeComment._id
+                })
                 .appendTo(buttons);
 
             $("<i>")
-                .addClass("fas fa-trash icon-helper")
-                .attr({ role: "button", tabindex: "0" })
-                .on("click", lockEvent(async function () {
-                    const response = await sendRequest({
-                        url: `/api/v1/comments/${safeComment._id}/delete`,
-                        method: "DELETE"
-                    });
-
-                    if (!response.success) return Alert.error({ text: response.error });
-                    Alert.success({ text: "Comment deleted!" });
-                }))
+                .addClass("fas fa-trash icon-helper comment-delete-btn")
+                .attr({ role: "button", tabindex: "0", "data-id": safeComment._id })
                 .appendTo(buttons);
         }
 
@@ -109,7 +89,7 @@ async function renderComments(state = {}, preFetchedResponse = null) {
 }
 
 export default async function showComments(id) {
-    const state = { id, skip: 0, container: null };
+    const state = { id, skip: 0, container: null, items: new Map() };
     const response = await getComments(state);
     if (!response.success) return Alert.error({ text: response.error });
 
@@ -121,6 +101,35 @@ export default async function showComments(id) {
         didOpen: () => {
             const $popup = $(Swal.getPopup());
             state.container = $popup.find("#comments-container");
+
+            $popup.on("click", ".comment-edit-btn", lockEvent(async function () {
+                const comment = state.items.get(this.dataset.id);
+                const instance = new CommentEditor("Edit comment", comment.content);
+                const result = await instance.open();
+                if (!result.isConfirmed) return;
+
+                const response = await sendRequest({
+                    url: `/api/v1/comments/${comment._id}/update`,
+                    method: "PUT",
+                    body: { content: result.value }
+                });
+
+                if (!response.success) return Alert.error({ text: response.error });
+                if (!response.changed) return Alert.info({ text: "No changes were made!" });
+
+                Alert.success({ text: "Comment updated!" });
+            }));
+
+            $popup.on("click", ".comment-delete-btn", lockEvent(async function () {
+                const comment = state.items.get(this.dataset.id);
+                const response = await sendRequest({
+                    url: `/api/v1/comments/${comment._id}/delete`,
+                    method: "DELETE"
+                });
+
+                if (!response.success) return Alert.error({ text: response.error });
+                Alert.success({ text: "Comment deleted!" });
+            }));
 
             $popup.find("#comments-prev-btn").on("click", lockEvent(async function () {
                 if (state.skip <= 0) return;
