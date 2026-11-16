@@ -10,8 +10,8 @@ const formatLabel = (template, label) => {
     const formattedLabel = template.replace("{label}", label.trim());
     return capitalize(formattedLabel);
 }
-        
-export const errors = {
+
+const errors = {
     INVALID_CREDENTIALS: () => "Invalid username or password.",
     NOT_AUTHENTICATED: () => "You are not logged in.",
     SESSION_INIT_FAILED: () => "Session initialization failed.",
