@@ -5,7 +5,7 @@ const config = {
     ALLOWED_TAGS: [
         "pre", "code", "b", "i", "br", "span", "em", "strong", "u", "s", "sub", "sup", "small",
         "p", "div", "h1", "h2", "h3", "h4", "h5", "h6", "hr", "ul", "ol", "li",
-        "blockquote", "cite", "q", "img", "video", "audio", "source", "a", "#text"
+        "blockquote", "cite", "q", "#text"
     ],
     USERNAME_MIN_LENGTH: 3,
     USERNAME_MAX_LENGTH: 10,
