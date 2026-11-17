@@ -1,6 +1,6 @@
 import config from "../core/config.js";
 import schemas from "../core/schemas.js";
-import { ClientError } from "../core/utils.js";
+import { AppError } from "../core/utils.js";
 import errors from "../../shared/errors.js";
 import mongoose from "mongoose";
 
@@ -19,7 +19,7 @@ export async function likePost(req, res) {
             }, { session });
 
             if (result.matchedCount === 0) {
-                throw new ClientError(errors.ACCESS_DENIED("post"), 404);
+                throw new AppError(errors.ACCESS_DENIED("post"), 404);
             }
 
             await schemas.Likes.create([{ user: req.session.userId, post: id }], { session });
@@ -70,7 +70,7 @@ export async function deletePost(req, res) {
             }, { session });
 
             if (result.deletedCount === 0) {
-                throw new ClientError(errors.ACCESS_DENIED("post"), 404);
+                throw new AppError(errors.ACCESS_DENIED("post"), 404);
             }
 
             await schemas.Likes.deleteMany({ post: id }, { session });

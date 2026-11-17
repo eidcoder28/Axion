@@ -44,11 +44,12 @@ export function validate(req, res, next) {
     next();
 }
 
-export class ClientError extends Error {
+export class AppError extends Error {
     constructor(msg, statusCode = 400) {
         super(msg);
+        this.name = this.constructor.name;
         this.statusCode = statusCode;
-        this.isCustom = true;
+        this.isOperational = true;
     }
 }
 
