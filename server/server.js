@@ -2,19 +2,16 @@ import config from "./core/config.js";
 import express from "express";
 import path from "path";
 import session from "express-session";
-import mongoose from "mongoose";
 import MongoStore from "connect-mongo";
 import errors from "../shared/errors.js";
 import postsRouter from "./routes/posts.js";
 import authRouter from "./routes/auth.js";
 import { limit } from "./core/utils.js";
+import mongoose from "mongoose";
+import "./core/database.js";
 
 const __dirname = import.meta.dirname;
 const app = express();
-
-mongoose.connect(config.MONGO_URI)
-    .then(() => console.log("MongoDB connected!"))
-    .catch(err => console.error(err.message));
 
 app.use("/shared", express.static(path.join(__dirname, "..", "shared")));
 app.use(express.static(path.join(__dirname, "..", "client"), { index: false }));
@@ -25,7 +22,7 @@ app.use(
         resave: false,
         saveUninitialized: false,
         store: MongoStore.create({
-            mongoUrl: config.MONGO_URI,
+            client: mongoose.connection.getClient(),
             collectionName: "sessions"
         }),
         cookie: {
