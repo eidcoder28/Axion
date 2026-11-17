@@ -22,7 +22,7 @@ export async function likePost(req, res) {
                 throw new ClientError(errors.ACCESS_DENIED("post"), 404);
             }
 
-            await schemas.Likes.create([{ by: req.session.userId, post: id }], { session });
+            await schemas.Likes.create([{ user: req.session.userId, post: id }], { session });
         });
     } finally {
         await session.endSession();
@@ -37,7 +37,7 @@ export async function updatePost(req, res) {
     const contentCond = { $eq: ["$content", { $literal: content }] };
 
     const result = await schemas.Posts.updateOne(
-        { _id: id, by: req.session.userId },
+        { _id: id, user: req.session.userId },
         [{
             $set: {
                 title: { $cond: [titleCond, "$title", { $literal: title }] },
@@ -66,7 +66,7 @@ export async function deletePost(req, res) {
         await session.withTransaction(async () => {
             const result = await schemas.Posts.deleteOne({
                 _id: id,
-                by: req.session.userId
+                user: req.session.userId
             }, { session });
 
             if (result.deletedCount === 0) {
@@ -88,7 +88,7 @@ export async function createComment(req, res) {
     const post = await schemas.Posts.exists({ _id: id });
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
 
-    await schemas.Comments.create({ content, post: id, by: req.session.userId });
+    await schemas.Comments.create({ content, post: id, user: req.session.userId });
     return res.status(201).json({ success: true });
 }
 
@@ -97,7 +97,7 @@ export async function updateComment(req, res) {
     const contentCond = { $eq: ["$content", { $literal: content }] };
 
     const result = await schemas.Comments.updateOne(
-        { _id: id, by: req.session.userId },
+        { _id: id, user: req.session.userId },
         [{
             $set: {
                 content: { $cond: [contentCond, "$content", { $literal: content }] },
@@ -122,7 +122,7 @@ export async function deleteComment(req, res) {
     const id = req.data.id;
     const result = await schemas.Comments.deleteOne({
         _id: id,
-        by: req.session.userId
+        user: req.session.userId
     });
 
     if (result.deletedCount === 0) {
@@ -138,7 +138,7 @@ export async function createPost(req, res) {
     await schemas.Posts.create({
         title,
         content,
-        by: req.session.userId
+        user: req.session.userId
     });
 
     return res.status(201).json({ success: true });
@@ -147,7 +147,7 @@ export async function createPost(req, res) {
 export async function getPost(req, res) {
     const id = req.data.id;
     const post = await schemas.Posts.findById(id)
-        .populate("by", "-password -email")
+        .populate("user", "-password -email")
         .lean();
 
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
@@ -160,7 +160,7 @@ export async function getPosts(req, res) {
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.POSTS_LIMIT)
-        .populate("by", "-password -email")
+        .populate("user", "-password -email")
         .lean();
 
     return res.status(200).json({ success: true, posts });
@@ -172,7 +172,7 @@ export async function getComments(req, res) {
         .skip(skip)
         .limit(config.COMMENTS_LIMIT)
         .sort({ createdAt: -1, _id: -1 })
-        .populate("by", "-password -email")
+        .populate("user", "-password -email")
         .lean();
 
     return res.status(200).json({ success: true, comments });

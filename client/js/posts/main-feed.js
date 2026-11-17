@@ -29,7 +29,7 @@ postsContainer.on("click", ".post-share-btn", lockEvent(function () {
 
 postsContainer.on("click", ".post-author", lockEvent(function () {
     const post = postsMap.get(this.dataset.id);
-    return showProfile(toObject(post.by)._id);
+    return showProfile(toObject(post.user)._id);
 }));
 
 postsContainer.on("click", ".post-like-btn", lockEvent(async function () {
@@ -88,7 +88,7 @@ export async function renderPosts(posts = []) {
     posts.forEach(post => {
         const safePost = toObject(post);
         postsMap.set(safePost._id, safePost);
-        const safeBy = toObject(safePost.by);
+        const safeUser = toObject(safePost.user);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
@@ -111,7 +111,7 @@ export async function renderPosts(posts = []) {
             .addClass("post-author")
             .css({ color: "red", cursor: "pointer" })
             .attr({ role: "button", tabindex: "0", "data-id": safePost._id })
-            .text(`Created by: ${capitalize(safeBy.username) || "Someone"}`)
+            .text(`Created by: ${capitalize(safeUser.username) || "Someone"}`)
             .appendTo(card);
 
         const reactions = $("<div>").addClass("reactions-container").appendTo(card);

@@ -44,11 +44,11 @@ export async function getUserProfile(req, res) {
 
 export async function getUserPosts(req, res) {
     const { id, skip } = req.data;
-    const posts = await schemas.Posts.find({ by: id })
+    const posts = await schemas.Posts.find({ user: id })
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.USER_POSTS_LIMIT)
-        .populate("by", "-password -email")
+        .populate("user", "-password -email")
         .lean();
 
     return res.status(200).json({ success: true, posts });

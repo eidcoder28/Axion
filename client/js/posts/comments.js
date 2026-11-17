@@ -44,7 +44,7 @@ async function renderComments(state = {}, preFetchedResponse = null) {
 
     response.comments.forEach(comment => {
         const safeComment = toObject(comment);
-        const safeBy = toObject(safeComment.by);
+        const safeUser = toObject(safeComment.user);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
         
@@ -52,10 +52,10 @@ async function renderComments(state = {}, preFetchedResponse = null) {
 
         $("<h3>")
             .addClass("overflow")
-            .text(capitalize(safeBy.username) || "User")
+            .text(capitalize(safeUser.username) || "User")
             .appendTo(header);
 
-        if (safeBy?._id && safeBy._id === quickInfo?._id) {
+        if (safeUser?._id && safeUser._id === quickInfo?._id) {
             const buttons = $("<div>").addClass("center").appendTo(header);
 
             $("<i>")
