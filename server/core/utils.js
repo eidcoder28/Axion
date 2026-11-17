@@ -1,4 +1,4 @@
-import schemas from "./schemas.js";
+import models from "./models.js";
 import rateLimit from "express-rate-limit";
 import config from "./config.js";
 import errors from "../../shared/errors.js";
@@ -9,7 +9,7 @@ export async function requireAuth(req, res, next) {
         return res.status(401).json({ error: errors.NOT_AUTHENTICATED() });
     }
 
-    const user = await schemas.Users.findById(req.session.userId).select("username").lean();
+    const user = await models.Users.findById(req.session.userId).select("username").lean();
 
     if (!user) {
         return res.status(404).json({ error: errors.NOT_FOUND("account") });

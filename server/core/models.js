@@ -1,7 +1,7 @@
-import mongoose from "mongoose";
+import { Schema, model } from "mongoose";
 import config from "./config.js";
 
-const usersSchema = new mongoose.Schema({
+const usersSchema = new Schema({
     password: { type: String, required: true },
     email: {
         type: String,
@@ -23,26 +23,26 @@ const usersSchema = new mongoose.Schema({
 usersSchema.index({ username: 1 }, { unique: true });
 usersSchema.index({ email: 1 }, { unique: true });
 
-const likesSchema = new mongoose.Schema({
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
-    post: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
+const likesSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: "Users", required: true },
+    post: { type: Schema.Types.ObjectId, ref: "Posts", required: true },
 }, { timestamps: true });
 
 likesSchema.index({ user: 1, post: 1 }, { unique: true });
 
-const postsSchema = new mongoose.Schema({
+const postsSchema = new Schema({
     title: { type: String, trim: true, required: true, maxLength: config.POST_TITLE_MAX_LENGTH },
     content: { type: String, trim: true, required: true, maxLength: config.POST_CONTENT_MAX_LENGTH },
     likes: { type: Number, default: 0, min: 0 },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "Users", required: true },
 }, { timestamps: true });
 
 postsSchema.index({ user: 1 });
 postsSchema.index({ likes: -1, createdAt: -1, _id: -1 });
 
-const commentsSchema = new mongoose.Schema({
-    post: { type: mongoose.Schema.Types.ObjectId, ref: "Posts", required: true },
-    user: { type: mongoose.Schema.Types.ObjectId, ref: "Users", required: true },
+const commentsSchema = new Schema({
+    post: { type: Schema.Types.ObjectId, ref: "Posts", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "Users", required: true },
     content: { type: String, trim: true, required: true, maxLength: config.COMMENTS_MAX_LENGTH },
     editedAt: { type: Date, default: null }
 }, { timestamps: true });
@@ -50,8 +50,8 @@ const commentsSchema = new mongoose.Schema({
 commentsSchema.index({ post: 1 });
 
 export default {
-    Users: mongoose.model("Users", usersSchema, "users"),
-    Likes: mongoose.model("Likes", likesSchema, "likes"),
-    Posts: mongoose.model("Posts", postsSchema, "posts"),
-    Comments: mongoose.model("Comments", commentsSchema, "comments")
+    Users: model("Users", usersSchema, "users"),
+    Likes: model("Likes", likesSchema, "likes"),
+    Posts: model("Posts", postsSchema, "posts"),
+    Comments: model("Comments", commentsSchema, "comments")
 }

@@ -1,5 +1,5 @@
 import config from "../core/config.js";
-import schemas from "../core/schemas.js";
+import models from "../core/models.js";
 import { AppError } from "../core/utils.js";
 import errors from "../../shared/errors.js";
 import mongoose from "mongoose";
@@ -10,7 +10,7 @@ export async function likePost(req, res) {
 
     try {
         await session.withTransaction(async () => {
-            const result = await schemas.Posts.updateOne({
+            const result = await models.Posts.updateOne({
                 _id: id
             }, {
                 $inc: {
@@ -22,7 +22,7 @@ export async function likePost(req, res) {
                 throw new AppError(errors.ACCESS_DENIED("post"), 404);
             }
 
-            await schemas.Likes.create([{ user: req.session.userId, post: id }], { session });
+            await models.Likes.create([{ user: req.session.userId, post: id }], { session });
         });
     } finally {
         await session.endSession();
@@ -36,7 +36,7 @@ export async function updatePost(req, res) {
     const titleCond = { $eq: ["$title", { $literal: title }] };
     const contentCond = { $eq: ["$content", { $literal: content }] };
 
-    const result = await schemas.Posts.updateOne(
+    const result = await models.Posts.updateOne(
         { _id: id, user: req.session.userId },
         [{
             $set: {
@@ -64,7 +64,7 @@ export async function deletePost(req, res) {
 
     try {
         await session.withTransaction(async () => {
-            const result = await schemas.Posts.deleteOne({
+            const result = await models.Posts.deleteOne({
                 _id: id,
                 user: req.session.userId
             }, { session });
@@ -73,8 +73,8 @@ export async function deletePost(req, res) {
                 throw new AppError(errors.ACCESS_DENIED("post"), 404);
             }
 
-            await schemas.Likes.deleteMany({ post: id }, { session });
-            await schemas.Comments.deleteMany({ post: id }, { session });
+            await models.Likes.deleteMany({ post: id }, { session });
+            await models.Comments.deleteMany({ post: id }, { session });
         });
     } finally {
         await session.endSession();
@@ -85,10 +85,10 @@ export async function deletePost(req, res) {
 
 export async function createComment(req, res) {
     const { id, content } = req.data;
-    const post = await schemas.Posts.exists({ _id: id });
+    const post = await models.Posts.exists({ _id: id });
     if (!post) return res.status(404).json({ error: errors.NOT_FOUND("Post") });
 
-    await schemas.Comments.create({ content, post: id, user: req.session.userId });
+    await models.Comments.create({ content, post: id, user: req.session.userId });
     return res.status(201).json({ success: true });
 }
 
@@ -96,7 +96,7 @@ export async function updateComment(req, res) {
     const { id, content } = req.data;
     const contentCond = { $eq: ["$content", { $literal: content }] };
 
-    const result = await schemas.Comments.updateOne(
+    const result = await models.Comments.updateOne(
         { _id: id, user: req.session.userId },
         [{
             $set: {
@@ -120,7 +120,7 @@ export async function updateComment(req, res) {
 
 export async function deleteComment(req, res) {
     const id = req.data.id;
-    const result = await schemas.Comments.deleteOne({
+    const result = await models.Comments.deleteOne({
         _id: id,
         user: req.session.userId
     });
@@ -135,7 +135,7 @@ export async function deleteComment(req, res) {
 export async function createPost(req, res) {
     const { title, content } = req.data;
 
-    await schemas.Posts.create({
+    await models.Posts.create({
         title,
         content,
         user: req.session.userId
@@ -146,7 +146,7 @@ export async function createPost(req, res) {
 
 export async function getPost(req, res) {
     const id = req.data.id;
-    const post = await schemas.Posts.findById(id)
+    const post = await models.Posts.findById(id)
         .populate("user", "-password -email")
         .lean();
 
@@ -156,7 +156,7 @@ export async function getPost(req, res) {
 
 export async function getPosts(req, res) {
     const { skip } = req.data;
-    const posts = await schemas.Posts.find({})
+    const posts = await models.Posts.find({})
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.POSTS_LIMIT)
@@ -168,7 +168,7 @@ export async function getPosts(req, res) {
 
 export async function getComments(req, res) {
     const { skip, id } = req.data;
-    const comments = await schemas.Comments.find({ post: id })
+    const comments = await models.Comments.find({ post: id })
         .skip(skip)
         .limit(config.COMMENTS_LIMIT)
         .sort({ createdAt: -1, _id: -1 })

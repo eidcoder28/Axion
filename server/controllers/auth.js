@@ -1,5 +1,5 @@
 import bcrypt from "bcrypt";
-import schemas from "../core/schemas.js";
+import models from "../core/models.js";
 import config from "../core/config.js";
 import errors from "../../shared/errors.js";
 import { initSession } from "../core/utils.js";
@@ -8,7 +8,7 @@ const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8.6J6W9Q/1R5yB9qH2q/9wQ5v4X3eO
 
 export async function login(req, res) {
     const { username, password } = req.data;
-    const user = await schemas.Users.findOne({ username }).select("password").lean();
+    const user = await models.Users.findOne({ username }).select("password").lean();
     const hash = user ? user.password : DUMMY_HASH;
     const isMatch = await bcrypt.compare(password, hash);
 
@@ -23,7 +23,7 @@ export async function login(req, res) {
 export async function signup(req, res) {
     const { username, password, email } = req.data;
     const hashed = await bcrypt.hash(password, config.BCRYPT_SALT_ROUNDS);
-    const user = await schemas.Users.create({ username, email, password: hashed });
+    const user = await models.Users.create({ username, email, password: hashed });
 
     await initSession(req, user._id);
     return res.status(201).json({ success: true });
@@ -31,7 +31,7 @@ export async function signup(req, res) {
 
 export async function getUserProfile(req, res) {
     const id = req.data.id;
-    const user = await schemas.Users.findById(id)
+    const user = await models.Users.findById(id)
         .select("username")
         .lean();
 
@@ -44,7 +44,7 @@ export async function getUserProfile(req, res) {
 
 export async function getUserPosts(req, res) {
     const { id, skip } = req.data;
-    const posts = await schemas.Posts.find({ user: id })
+    const posts = await models.Posts.find({ user: id })
         .sort({ createdAt: -1, _id: -1 })
         .skip(skip)
         .limit(config.USER_POSTS_LIMIT)
