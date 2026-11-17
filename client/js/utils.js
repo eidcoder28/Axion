@@ -66,7 +66,6 @@ export async function sendRequest(options = {}, showLoading = true) {
     try {
         const response = await axios({
             ...requestConfig,
-            validateStatus: status => status >= 200 && status < 500,
             data: body,
             credentials: "include"
         });
