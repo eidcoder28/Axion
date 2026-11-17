@@ -1,4 +1,4 @@
-// Not bad for small scale ¯\_(ツ)_/¯
+// Not bad for small scale シ
 const templates = {
   POST_EDITOR: () => `
 <input id="post-editor-title" type="text" placeholder="Enter post title...">
