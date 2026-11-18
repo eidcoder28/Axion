@@ -1,15 +1,22 @@
 const FALLBACK_MSG = "Please re-check your request and try again.";
-const isString = (str) => typeof str === "string" && str.trim();
-const capitalize = (str) => str.charAt(0).toUpperCase() + str.slice(1);
-const getIntegersError = (fallback, ...nums) => nums?.every(num => Number.isInteger(num) && num >= 0) ? null : fallback;
-const formatLabel = (template, label) => {
-    if (!isString(template) || !isString(label)) {
-        return FALLBACK_MSG;
-    }
+const pluralRules = new Intl.PluralRules("en-US");
 
-    const formattedLabel = template.replace("{label}", label.trim());
-    return capitalize(formattedLabel);
+const isValidString = (str) => typeof str === "string" && str.trim().length > 0;
+const getPositiveIntegersError = (fallback, ...nums) =>
+    nums.every((num) => Number.isInteger(num) && num >= 1) ? null : fallback;
+
+const capitalize = (str) => {
+    if (!isValidString(str)) return "";
+    return (str.charAt(0).toUpperCase() + str.slice(1)).trim();
 }
+
+const formatLabel = (template, label) => {
+    if (!isValidString(template) || !isValidString(label)) return FALLBACK_MSG;
+    return capitalize(template.replace("{label}", label.trim()));
+}
+
+const formatCharCount = (count) =>
+    `${count} ${pluralRules.select(count) === "one" ? "character" : "characters"}`;
 
 const errors = {
     INVALID_CREDENTIALS: () => "Invalid username or password.",
@@ -21,7 +28,7 @@ const errors = {
     RATE_LIMITED: () => "Too many requests. Please try again later.",
     UNEXPECTED_ERROR: () => "An unexpected error occurred.",
     DUPLICATE_RESOURCE: (label) => formatLabel("{label} already exists in the system.", label),
-    ACCESS_DENIED: (label) => formatLabel("You do not have access to this {label}", label),
+    ACCESS_DENIED: (label) => formatLabel("You do not have access to this {label}.", label),
     NOT_FOUND: (label) => formatLabel("{label} not found.", label),
 
     VALIDATION: {
@@ -31,20 +38,22 @@ const errors = {
         REQUIRED: (label) => formatLabel("{label} is required.", label),
 
         MIN_LENGTH: (label, min) =>
-            getIntegersError(FALLBACK_MSG, min) ??
-            formatLabel(`{label} must be at least ${min} characters.`, label),
+            getPositiveIntegersError(FALLBACK_MSG, min) ??
+            formatLabel(`{label} must be at least ${formatCharCount(min)}.`, label),
 
         MAX_LENGTH: (label, max) =>
-            getIntegersError(FALLBACK_MSG, max) ??
-            formatLabel(`{label} must not exceed ${max} characters.`, label),
+            getPositiveIntegersError(FALLBACK_MSG, max) ??
+            formatLabel(`{label} must not exceed ${formatCharCount(max)}.`, label),
 
         LENGTH_RANGE: (label, min, max) =>
-            getIntegersError(FALLBACK_MSG, min, max) ??
-            formatLabel(`{label} must be between ${min} and ${max} characters.`, label),
+            getPositiveIntegersError(FALLBACK_MSG, min, max) ??
+            (min >= max
+                ? FALLBACK_MSG
+                : formatLabel(`{label} must be between ${min} and ${max} characters.`, label)),
 
         EXACT_LENGTH: (label, length) =>
-            getIntegersError(FALLBACK_MSG, length) ??
-            formatLabel(`{label} must be exactly ${length} characters.`, label)
+            getPositiveIntegersError(FALLBACK_MSG, length) ??
+            formatLabel(`{label} must be exactly ${formatCharCount(length)}.`, label)
     }
 }
 
