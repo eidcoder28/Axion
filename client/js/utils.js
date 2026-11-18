@@ -66,8 +66,7 @@ export async function sendRequest(options = {}, showLoading = true) {
     try {
         const response = await axios({
             ...requestConfig,
-            data: body,
-            credentials: "include"
+            data: body
         });
 
         return toObject(response.data);
