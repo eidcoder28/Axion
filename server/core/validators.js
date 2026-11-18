@@ -62,8 +62,8 @@ export const getUserProfileValidator = [mongoIdParam("id", "user ID"), validate]
 export const getUserPostsValidator = [queryInt("skip", "skip"), mongoIdParam("id", "user ID"), validate]
 export const signupValidator = [
     ...userValidator(),
-    baseTextBody("email", "Email")
-        .isLength({ max: config.EMAIL_MAX_LENGTH }).withMessage(errors.VALIDATION.MAX_LENGTH("Email", config.EMAIL_MAX_LENGTH)).bail()
+    baseTextBody("email", "email")
+        .isLength({ max: config.EMAIL_MAX_LENGTH }).withMessage(errors.VALIDATION.MAX_LENGTH("email", config.EMAIL_MAX_LENGTH)).bail()
         .isEmail().withMessage(errors.VALIDATION.INVALID_FORMAT("email")).bail()
         .normalizeEmail(),
     validate

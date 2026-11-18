@@ -47,7 +47,7 @@ app.get("/", (req, res) => {
 });
 
 app.use((req, res) => {
-    // Return a simple JSON response for simplicity :)
+    // Return a simple JSON response :O
     res.status(404).json({ error: errors.NOT_FOUND("route") });
 });
 
@@ -61,5 +61,5 @@ app.use((err, req, res, next) => {
 });
 
 app.listen(config.PORT, config.HOST, () => {
-    console.log(`Clean Engine live on port ${config.PORT}`);
+    console.log(`Live on port ${config.PORT}`);
 });
