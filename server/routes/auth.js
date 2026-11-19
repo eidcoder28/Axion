@@ -22,10 +22,10 @@ const authRateLimit = limit({ limit: config.AUTH_RATE_LIMIT_MAX_REQ });
 
 router.post("/auth/login", authRateLimit, loginValidator, login);
 router.post("/auth/signup", authRateLimit, signupValidator, signup);
+router.delete("/auth/signout", requireAuth, signout);
 router.get("/users/:id/profile", requireAuth, getUserProfileValidator, getUserProfile);
 router.get("/users/:id/posts", requireAuth, getUserPostsValidator, getUserPosts);
 router.get("/me/quick-info", requireAuth, getQuickInfo);
 router.get("/me/status", getStatus);
-router.delete("/auth/signout", requireAuth, signout);
 
 export default router;
