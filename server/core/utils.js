@@ -26,18 +26,26 @@ export function limit(options = {}) {
         windowMs: config.RATE_LIMIT_WINDOW_MS,
         limit: config.MAIN_RATE_LIMIT_MAX_REQ,
         message: {
-            status: 429,
-            error,
+            status: 429, error
         },
         standardHeaders: true,
         legacyHeaders: false,
+        keyGenerator: (req) => {
+            if (req.session.loggedIn) {
+                return req.session.userId;
+            }
+
+            return req.ip;
+        },
         ...rateLimitOptions
     });
 }
 
 export function validate(req, res, next) {
     const result = validationResult(req);
-    if (!result.isEmpty()) return res.status(400).json({ error: result.array()[0].msg });
+    if (!result.isEmpty()) {
+        return res.status(400).json({ error: result.array()[0].msg });
+    }
 
     const cleanData = matchedData(req);
     req.data = cleanData;
