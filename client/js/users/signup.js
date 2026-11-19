@@ -80,7 +80,7 @@ async function openAuthModal(type = "signup") {
     await handleAuthSuccess(cfg.successMsg);
 }
 
-$(document).on("click", ".link-swal-auth", function () {
+$(document).on("click", ".auth-link", function () {
     openAuthModal($(this).data("target"));
 });
 

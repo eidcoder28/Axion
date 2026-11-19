@@ -13,20 +13,30 @@ const templates = {
 </div>`,
 
   USER_LOGIN: () => `
-<input type="text" id="login-username" placeholder="Username">
-<input type="password" id="login-password" placeholder="Password">
-<p class="text-swal-auth">
-    Need an account? <span class="link-swal-auth" role="button" tabindex="0" data-target="signup">Sign up</span>
-</p>
+<div class="auth-modal">
+    <div class="auth-modal-inputs">
+        <input type="text" id="login-username" placeholder="Username">
+        <input type="password" id="login-password" placeholder="Password">
+    </div>
+    <p class="auth-text">
+        Need an account? 
+        <span class="auth-link" role="button" tabindex="0" data-target="signup">Signup</span>
+    </p>
+</div>
 `,
 
   USER_SIGNUP: () => `
-<input type="text" id="signup-username" placeholder="Username">
-<input type="password" id="signup-password" placeholder="Password">
-<input type="email" id="signup-email" placeholder="Email">
-<p class="text-swal-auth">
-    Already have an account? <span class="link-swal-auth" role="button" tabindex="0" data-target="login">Log in</span>
-</p>
+<div class="auth-modal">
+    <div class="auth-modal-inputs">
+        <input type="text" id="signup-username" placeholder="Username">
+        <input type="password" id="signup-password" placeholder="Password">
+        <input type="email" id="signup-email" placeholder="Email">
+    </div>
+    <p class="auth-text">
+        Already have an account? 
+        <span class="auth-link" role="button" tabindex="0" data-target="login">Login</span>
+    </p>
+</div>
 `,
 
   USER_PROFILE: () => `
