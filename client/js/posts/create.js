@@ -20,7 +20,7 @@ createPostBtn.on("click", lockEvent(async function () {
     Alert.success({ text: "Post created!" });
 }));
 
-if (!postsState.customPostId) {
+if (!postsState.customId) {
     $("<button>")
         .attr("id", "posts-prev-btn")
         .prop("disabled", true)

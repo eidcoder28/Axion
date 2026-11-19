@@ -37,20 +37,20 @@ export default async function showProfile(id) {
         confirmButtonText: "Close",
         stopKeydownPropagation: false,
         didOpen: () => {
-            const $popup = $(Swal.getPopup());
-            state.container = $popup.find("#user-posts-container");
+            const popup = $(Swal.getPopup());
+            state.container = popup.find("#user-posts-container");
 
-            $popup.find("#profile-load-posts-btn").on("click", lockEvent(async function () {
+            popup.find("#profile-load-posts-btn").on("click", lockEvent(async function () {
                 await renderProfilePosts(state);
             }));
 
-            $popup.find("#profile-posts-prev-btn").on("click", lockEvent(async function () {
+            popup.find("#profile-posts-prev-btn").on("click", lockEvent(async function () {
                 if (state.skip <= 0) return;
                 state.skip -= config.USER_POSTS_LIMIT;
                 await renderProfilePosts(state);
             }));
 
-            $popup.find("#profile-posts-next-btn").on("click", lockEvent(async function () {
+            popup.find("#profile-posts-next-btn").on("click", lockEvent(async function () {
                 if (state.skip + config.USER_POSTS_LIMIT > config.PAGINATION_MAX_SKIP) return;
                 if (!$(state.container).find("#profile-load-posts-btn").length) {
                     state.skip += config.USER_POSTS_LIMIT;
@@ -59,7 +59,7 @@ export default async function showProfile(id) {
                 await renderProfilePosts(state);
             }));
 
-            bindProfilePostEvents($popup, state);
+            bindProfilePostEvents(popup, state);
         }
     });
 }

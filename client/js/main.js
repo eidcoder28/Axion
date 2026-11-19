@@ -12,5 +12,5 @@ $(document).on("keydown", "[role='button']", function (e) {
     }
 });
 
-getPosts(postsState.customPostId);
+getPosts(postsState.customId);
 initQuickInfo();

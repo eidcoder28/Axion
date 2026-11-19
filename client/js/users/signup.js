@@ -55,13 +55,13 @@ async function openAuthModal(type = "signup") {
         confirmButtonText: "Submit",
         cancelButtonText: "Cancel",
         didOpen: () => {
-            const $popup = $(Swal.getPopup());
-            cfg.fields.forEach(field => $popup.find(field.selector).attr("maxLength", field.max));
+            const popup = $(Swal.getPopup());
+            cfg.fields.forEach(field => popup.find(field.selector).attr("maxLength", field.max));
         },
         preConfirm: () => {
-            const $popup = $(Swal.getPopup());
+            const popup = $(Swal.getPopup());
             const values = Object.fromEntries(
-                cfg.fields.map(field => [field.key, $popup.find(field.selector).val().trim()])
+                cfg.fields.map(field => [field.key, popup.find(field.selector).val().trim()])
             );
             const error = cfg.validate(values);
             return error ? Swal.showValidationMessage(error) : values;

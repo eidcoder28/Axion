@@ -18,13 +18,13 @@ export default class PostEditor {
             showCancelButton: true,
             confirmButtonText: "Submit",
             didOpen: () => {
-                const $popup = $(Swal.getPopup());
+                const popup = $(Swal.getPopup());
                 
-                $popup.find("#post-editor-title")
+                popup.find("#post-editor-title")
                     .val(toString(this.initial.title))
                     .attr("maxLength", config.POST_TITLE_MAX_LENGTH);
 
-                $popup.find("#post-editor-content")
+                popup.find("#post-editor-content")
                     .val(toString(this.initial.content))
                     .attr("maxLength", config.POST_CONTENT_MAX_LENGTH);
             },
@@ -34,9 +34,9 @@ export default class PostEditor {
             },
 
             preConfirm: () => {
-                const $popup = $(Swal.getPopup());
-                const title = $popup.find("#post-editor-title").val().trim();
-                const content = $popup.find("#post-editor-content").val().trim();
+                const popup = $(Swal.getPopup());
+                const title = popup.find("#post-editor-title").val().trim();
+                const content = popup.find("#post-editor-content").val().trim();
 
                 if (validator.isEmpty(title)) {
                     return Swal.showValidationMessage(errors.VALIDATION.REQUIRED("title"));

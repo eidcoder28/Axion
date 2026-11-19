@@ -19,7 +19,7 @@ const postsContainer = $("#posts-container");
 
 export const postsState = {
     skip: 0,
-    customPostId: query.get("id")
+    customId: query.get("id")
 }
 
 postsContainer.on("click", ".post-share-btn", lockEvent(function () {
@@ -41,8 +41,8 @@ postsContainer.on("click", ".post-like-btn", lockEvent(async function () {
 
     if (response.error) return Alert.error({ text: response.error });
 
-    const $likesCount = $(this).find(".likes-count");
-    $likesCount.text((Number($likesCount.text()) || 0) + 1);
+    const likesCount = $(this).find(".likes-count");
+    likesCount.text((Number(likesCount.text()) || 0) + 1);
     Alert.success({ text: "Post liked!" });
 }));
 
@@ -139,9 +139,9 @@ export async function renderPosts(posts = []) {
     postsContainer.append(fragment);
 }
 
-export async function getPosts(postId = null) {
+export async function getPosts(customId = null) {
     const data = await sendRequest({
-        url: postId ? `/api/v1/posts/${postId}` : `/api/v1/posts/?skip=${postsState.skip}`
+        url: customId ? `/api/v1/posts/${customId}` : `/api/v1/posts/?skip=${postsState.skip}`
     });
 
     if (!data.success) return Alert.error({ text: data.error });

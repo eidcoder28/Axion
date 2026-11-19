@@ -12,13 +12,13 @@ import {
     Swal
 } from "@app/utils.js";
 
-export function bindProfilePostEvents($popup, state) {
-    $popup.on("click", ".profile-post-share-btn", lockEvent(function () {
+export function bindProfilePostEvents(popup, state) {
+    popup.on("click", ".profile-post-share-btn", lockEvent(function () {
         const post = state.items.get(this.dataset.id);
         return copy(generatePostLink(post._id));
     }));
 
-    $popup.on("click", ".profile-post-delete-btn", lockEvent(async function () {
+    popup.on("click", ".profile-post-delete-btn", lockEvent(async function () {
         const post = state.items.get(this.dataset.id);
         const response = await sendRequest({
             url: `/api/v1/posts/${post._id}/delete`,
@@ -29,7 +29,7 @@ export function bindProfilePostEvents($popup, state) {
         Alert.success({ text: "Post deleted!" });
     }));
 
-    $popup.on("click", ".profile-post-edit-btn", lockEvent(async function () {
+    popup.on("click", ".profile-post-edit-btn", lockEvent(async function () {
         const post = state.items.get(this.dataset.id);
         const instance = new PostEditor("Update post", post);
         const result = await instance.open();
@@ -61,10 +61,10 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
     state.items.clear();
     $(state.container).empty();
 
-    const $popup = $(Swal.getPopup());
+    const popup = $(Swal.getPopup());
     const hasPosts = Array.isArray(response?.posts) && response.posts.length > 0;
-    $popup.find("#profile-posts-prev-btn").prop("disabled", state.skip <= 0);
-    $popup.find("#profile-posts-next-btn").prop("disabled", !hasPosts);
+    popup.find("#profile-posts-prev-btn").prop("disabled", state.skip <= 0);
+    popup.find("#profile-posts-next-btn").prop("disabled", !hasPosts);
 
     if (!hasPosts) {
         $("<div>")
