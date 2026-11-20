@@ -31,7 +31,6 @@ async function renderComments(state = {}, preFetchedResponse = null) {
     popup.find("#comments-prev-btn").prop("disabled", state.skip <= 0);
     popup.find("#comments-next-btn").prop("disabled", !hasComments);
 
-    // No data :/
     if (!hasComments) {
         $("<div>")
             .addClass("state-nothing-found")
