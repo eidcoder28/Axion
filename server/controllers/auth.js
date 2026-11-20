@@ -2,7 +2,7 @@ import bcrypt from "bcrypt";
 import models from "../core/models.js";
 import config from "../core/config.js";
 import errors from "../../shared/errors.js";
-import { initSession } from "../core/utils.js";
+import { initSession } from "../core/common.js";
 
 const DUMMY_HASH = "$2b$10$CwTycUXWue0Thq9StjUM0uJ8.6J6W9Q/1R5yB9qH2q/9wQ5v4X3eO";
 

@@ -1,21 +1,21 @@
 import showProfile from "@app/users/profile.js";
-import templates from "@app/templates.js";
 import {
     getLoginError,
     getSignupError,
     toggleAuthButtons,
     handleAuthSuccess
 } from "@app/users/signup-helpers.js";
+import config from "@shared/config.js";
+import $ from "cash-dom";
+import Swal from "sweetalert2";
+import templates from "@app/templates.js";
 import {
     sendRequest,
     lockEvent,
-    config,
     quickInfo,
     toObject,
-    $,
-    Alert,
-    Swal
-} from "@app/utils.js";
+    Alert
+} from "@app/common.js";
 
 const authConfig = {
     login: {

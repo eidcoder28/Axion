@@ -1,5 +1,5 @@
 import express from "express";
-import { requireAuth } from "../core/utils.js";
+import { requireAuth } from "../core/common.js";
 import {
     createPostsValidator,
     getPostValidator,

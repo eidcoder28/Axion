@@ -1,17 +1,17 @@
-import templates from "@app/templates.js";
 import CommentEditor from "@app/posts/comment-editor.js";
+import config from "@shared/config.js";
+import $ from "cash-dom";
+import Swal from "sweetalert2";
+import templates from "@app/templates.js";
 import {
     sendRequest,
     capitalize,
     lockEvent,
-    config,
     quickInfo,
-    $,
     Alert,
-    Swal,
     toObject,
     toString
-} from "@app/utils.js";
+} from "@app/common.js";
 
 async function getComments(state = {}) {
     return await sendRequest({

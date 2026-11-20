@@ -6,7 +6,7 @@ import MongoStore from "connect-mongo";
 import errors from "../shared/errors.js";
 import postsRouter from "./routes/posts.js";
 import authRouter from "./routes/auth.js";
-import { limit } from "./core/utils.js";
+import { limit } from "./core/common.js";
 import mongoose from "mongoose";
 import "./core/database.js";
 

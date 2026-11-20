@@ -1,16 +1,16 @@
-import templates from "@app/templates.js";
 import { bindProfilePostEvents, renderProfilePosts } from "@app/users/profile-feed.js";
+import config from "@shared/config.js";
+import $ from "cash-dom";
+import Swal from "sweetalert2";
+import templates from "@app/templates.js";
 import {
     sendRequest,
     capitalize,
     lockEvent,
-    config,
     quickInfo,
     toObject,
-    $,
-    Alert,
-    Swal
-} from "@app/utils.js";
+    Alert
+} from "@app/common.js";
 
 export default async function showProfile(id) {
     const response = await sendRequest({

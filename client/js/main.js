@@ -1,4 +1,5 @@
-import { initQuickInfo, $ } from "@app/utils.js";
+import { initQuickInfo } from "@app/common.js";
+import $ from "cash-dom";
 import { getPosts, postsState } from "@app/posts/main-feed.js";
 import "@app/users/signup.js";
 import "@app/users/profile.js";

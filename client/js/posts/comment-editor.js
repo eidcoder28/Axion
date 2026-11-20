@@ -1,5 +1,8 @@
-import { config, Swal, validator, toString } from "@app/utils.js";
+import config from "@shared/config.js";
 import errors from "@shared/errors.js";
+import Swal from "sweetalert2";
+import validator from "validator";
+import { toString } from "@app/common.js";
 
 export default class CommentEditor {
     #instance;

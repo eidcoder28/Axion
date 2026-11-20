@@ -1,6 +1,12 @@
-import { lockEvent, config, $, sendRequest, Alert } from "@app/utils.js";
 import { getPosts, postsState } from "@app/posts/main-feed.js";
 import PostEditor from "@app/posts/post-editor.js";
+import config from "@shared/config.js";
+import $ from "cash-dom";
+import {
+    lockEvent,
+    sendRequest,
+    Alert
+} from "@app/common.js";
 
 const createPostBtn = $("#create-post-btn");
 const postsNavigationContainer = $("#posts-navigation-container");

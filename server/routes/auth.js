@@ -1,6 +1,6 @@
 import express from "express";
 import config from "../core/config.js";
-import { requireAuth, limit } from "../core/utils.js";
+import { requireAuth, limit } from "../core/common.js";
 import {
     loginValidator,
     signupValidator,

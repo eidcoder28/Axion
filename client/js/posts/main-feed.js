@@ -1,6 +1,7 @@
 import showProfile from "@app/users/profile.js";
 import showComments from "@app/posts/comments.js";
 import CommentEditor from "@app/posts/comment-editor.js";
+import $ from "cash-dom";
 import {
     sendRequest,
     capitalize,
@@ -9,9 +10,8 @@ import {
     lockEvent,
     toObject,
     copy,
-    $,
     Alert
-} from "@app/utils.js";
+} from "@app/common.js";
 
 const query = new URLSearchParams(window.location.search);
 const postsMap = new Map();

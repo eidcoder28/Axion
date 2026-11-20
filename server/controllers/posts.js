@@ -1,6 +1,6 @@
 import config from "../core/config.js";
 import models from "../core/models.js";
-import { AppError } from "../core/utils.js";
+import { AppError } from "../core/common.js";
 import errors from "../../shared/errors.js";
 import mongoose from "mongoose";
 

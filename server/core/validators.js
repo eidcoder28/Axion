@@ -1,5 +1,5 @@
 import { body, param, query } from "express-validator";
-import { validate } from "./utils.js";
+import { validate } from "./common.js";
 import config from "./config.js";
 import errors from "../../shared/errors.js";
 

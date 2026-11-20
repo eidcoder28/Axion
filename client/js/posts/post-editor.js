@@ -1,6 +1,10 @@
-import { config, $, Swal, validator, toObject, toString } from "@app/utils.js";
-import templates from "@app/templates.js";
+import config from "@shared/config.js";
 import errors from "@shared/errors.js";
+import $ from "cash-dom";
+import Swal from "sweetalert2";
+import validator from "validator";
+import templates from "@app/templates.js";
+import { toObject, toString } from "@app/common.js";
 
 export default class PostEditor {
     #instance;

@@ -1,16 +1,16 @@
 import PostEditor from "@app/posts/post-editor.js";
+import $ from "cash-dom";
+import Swal from "sweetalert2";
 import {
     copy,
     renderSafeHtml,
     generatePostLink,
     sendRequest,
-    $,
     capitalize,
     lockEvent,
     toObject,
-    Alert,
-    Swal
-} from "@app/utils.js";
+    Alert
+} from "@app/common.js";
 
 export function bindProfilePostEvents(state) {
     state.container.on("click", ".profile-post-share-btn", lockEvent(function () {

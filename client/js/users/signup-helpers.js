@@ -1,12 +1,12 @@
 import config from "@shared/config.js";
 import errors from "@shared/errors.js";
+import $ from "cash-dom";
+import validator from "validator";
 import {
     initQuickInfo,
     Alert,
-    sendRequest,
-    $,
-    validator
-} from "@app/utils.js";
+    sendRequest
+} from "@app/common.js";
 
 const loggedInGroup = $("#auth-buttons");
 const signUpBtn = $("#signup-btn");
