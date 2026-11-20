@@ -9,7 +9,7 @@ import {
 } from "@app/common.js";
 
 const createPostBtn = $("#create-post-btn");
-const postsNavigationContainer = $("#posts-navigation-container");
+const postsNavContainer = $("#posts-nav-container");
 
 createPostBtn.on("click", lockEvent(async function () {
     const instance = new PostEditor("Create post");
@@ -37,7 +37,7 @@ if (!postsState.customId) {
             postsState.skip -= config.POSTS_LIMIT;
             await getPosts();
         }))
-        .appendTo(postsNavigationContainer);
+        .appendTo(postsNavContainer);
 
     $("<button>")
         .attr("id", "posts-next-btn")
@@ -48,5 +48,5 @@ if (!postsState.customId) {
             postsState.skip += config.POSTS_LIMIT;
             await getPosts();
         }))
-        .appendTo(postsNavigationContainer);
+        .appendTo(postsNavContainer);
 }
