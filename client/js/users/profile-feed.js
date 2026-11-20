@@ -12,13 +12,13 @@ import {
     Swal
 } from "@app/utils.js";
 
-export function bindProfilePostEvents(popup, state) {
-    popup.on("click", ".profile-post-share-btn", lockEvent(function () {
+export function bindProfilePostEvents(state) {
+    state.container.on("click", ".profile-post-share-btn", lockEvent(function () {
         const post = state.items.get(this.dataset.id);
         return copy(generatePostLink(post._id));
     }));
 
-    popup.on("click", ".profile-post-delete-btn", lockEvent(async function () {
+    state.container.on("click", ".profile-post-delete-btn", lockEvent(async function () {
         const post = state.items.get(this.dataset.id);
         const response = await sendRequest({
             url: `/api/v1/posts/${post._id}/delete`,
@@ -29,7 +29,7 @@ export function bindProfilePostEvents(popup, state) {
         Alert.success({ text: "Post deleted!" });
     }));
 
-    popup.on("click", ".profile-post-edit-btn", lockEvent(async function () {
+    state.container.on("click", ".profile-post-edit-btn", lockEvent(async function () {
         const post = state.items.get(this.dataset.id);
         const instance = new PostEditor("Update post", post);
         const result = await instance.open();

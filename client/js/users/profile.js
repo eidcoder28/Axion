@@ -56,11 +56,11 @@ export default async function showProfile(id) {
                 if (!$(state.container).find("#profile-load-posts-btn").length) {
                     state.skip += config.USER_POSTS_LIMIT;
                 }
-                
+
                 await renderProfilePosts(state);
             }));
 
-            bindProfilePostEvents(popup, state);
+            bindProfilePostEvents(state);
         }
     });
 }
