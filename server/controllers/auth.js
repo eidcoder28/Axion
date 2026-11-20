@@ -29,6 +29,18 @@ export async function signup(req, res) {
     return res.status(201).json({ success: true });
 }
 
+export function signout(req, res) {
+    req.session.destroy(err => {
+        if (err) {
+            console.error(err.message);
+            return res.status(500).json({ error: errors.SESSION_DESTROY_FAILED() });
+        }
+
+        res.clearCookie("connect.sid");
+        return res.status(200).json({ success: true });
+    });
+}
+
 export async function getUserProfile(req, res) {
     const id = req.data.id;
     const user = await models.Users.findById(id)
@@ -52,18 +64,6 @@ export async function getUserPosts(req, res) {
         .lean();
 
     return res.status(200).json({ success: true, posts });
-}
-
-export function signout(req, res) {
-    req.session.destroy(err => {
-        if (err) {
-            console.error(err.message);
-            return res.status(500).json({ error: errors.SESSION_DESTROY_FAILED() });
-        }
-
-        res.clearCookie("connect.sid");
-        return res.status(200).json({ success: true });
-    });
 }
 
 export function getQuickInfo(req, res) {
