@@ -9,7 +9,6 @@ import {
     sendRequest,
     lockEvent,
     quickInfo,
-    toObject,
     Alert,
     initQuickInfo
 } from "@app/common.js";
@@ -43,8 +42,8 @@ const authConfig = {
 }
 
 async function openAuthModal(type = "signup") {
-    const cfg = toObject(authConfig[type]);
-    if (typeof cfg.html !== "function" || !cfg.title) return;
+    const cfg = authConfig[type];
+    if (!cfg) return;
 
     const result = await Swal.fire({
         html: cfg.html(),
@@ -142,7 +141,7 @@ $("#signout-btn").on("click", lockEvent(async () => {
 }));
 
 $("#profile-btn").on("click", lockEvent(() => {
-    return showProfile(quickInfo?._id);
+    return showProfile(quickInfo._id);
 }));
 
 toggleAuthButtons();

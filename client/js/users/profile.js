@@ -8,7 +8,6 @@ import {
     capitalize,
     lockEvent,
     quickInfo,
-    toObject,
     Alert
 } from "@app/common.js";
 
@@ -16,7 +15,7 @@ export default async function showProfile(id) {
     const response = await sendRequest({ url: `/api/v1/users/${id}/profile` });
     if (!response.success) return Alert.error({ text: response.error });
 
-    const user = toObject(response.user);
+    const { user = {} } = response;
     const state = {
         skip: 0,
         container: null,
@@ -24,7 +23,7 @@ export default async function showProfile(id) {
         user: {
             username: capitalize(user.username) || "User",
             id: user._id,
-            me: user._id && user._id === quickInfo?._id
+            me: user._id && user._id === quickInfo._id
         }
     }
 

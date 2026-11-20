@@ -7,16 +7,16 @@ import config from "@shared/config.js";
 import errors from "@shared/errors.js";
 import Notiflix from "notiflix";
 
-export function toObject(obj) {
+function toObject(obj) {
     return Object.prototype.toString.call(obj) === "[object Object]" ? obj : {};
 }
 
-export function toString(value) {
+export function toTrimmedString(value) {
     return typeof value === "string" ? value.trim() : "";
 }
 
 export async function copy(input) {
-    const text = toString(input);
+    const text = toTrimmedString(input);
     if (!text) return;
 
     try {
@@ -28,7 +28,7 @@ export async function copy(input) {
 }
 
 export function renderSafeHtml(input, parse = true) {
-    const raw = toString(input);
+    const raw = toTrimmedString(input);
     if (!raw) return "";
 
     const parsed = parse ? marked.parse(raw) : raw;
@@ -39,13 +39,10 @@ export function renderSafeHtml(input, parse = true) {
 }
 
 export function generatePostLink(postId) {
-    const id = toString(postId) || "POST_ID";
-    return `${window.location.origin}${window.location.pathname}?id=${id}`;
+    return `${window.location.origin}${window.location.pathname}?id=${postId}`;
 }
 
 export function lockEvent(fn) {
-    if (typeof fn !== "function") return;
-
     return async function (e) {
         const el = $(e.currentTarget);
         if (el.data("locked")) return;
@@ -60,11 +57,11 @@ export function lockEvent(fn) {
         } finally {
             el.data("locked", false).removeClass("disabled");
         }
-    }
+    };
 }
 
 export async function sendRequest(options = {}, showLoading = true) {
-    const { body, ...requestConfig } = toObject(options);
+    const { body, ...requestConfig } = options;
     if (showLoading) Notiflix.Loading.standard("Working on it...");
 
     try {
@@ -83,20 +80,16 @@ export async function sendRequest(options = {}, showLoading = true) {
 }
 
 export function capitalize(input) {
-    const text = toString(input);
-    if (!text) return "";
-
-    return text.charAt(0).toUpperCase() + text.slice(1);
+    const text = toTrimmedString(input);
+    return text ? text.charAt(0).toUpperCase() + text.slice(1) : "";
 }
 
 export let quickInfo = {};
 
 export async function initQuickInfo() {
-    try {
-        const data = await sendRequest({ url: "/api/v1/me/quick-info" }, false);
-        Object.assign(quickInfo, toObject(data));
-    } catch {
-        Alert.error({ text: errors.UNEXPECTED_ERROR() });
+    const data = await sendRequest({ url: "/api/v1/me/quick-info" }, false);
+    if (!data.error) {
+        Object.assign(quickInfo, data);
     }
 }
 
@@ -113,7 +106,7 @@ const BaseToast = Swal.mixin({
 });
 
 export const Alert = {
-    success: options => BaseToast.fire({ icon: "success", title: "Success", ...toObject(options) }),
-    error: options => BaseToast.fire({ icon: "error", title: "Error", ...toObject(options) }),
-    info: options => BaseToast.fire({ icon: "info", title: "Info", ...toObject(options) })
+    success: (options = {}) => BaseToast.fire({ icon: "success", title: "Success", ...options }),
+    error: (options = {}) => BaseToast.fire({ icon: "error", title: "Error", ...options }),
+    info: (options = {}) => BaseToast.fire({ icon: "info", title: "Info", ...options })
 }

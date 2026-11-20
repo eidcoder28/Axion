@@ -4,14 +4,17 @@ import $ from "cash-dom";
 import Swal from "sweetalert2";
 import validator from "validator";
 import templates from "@app/templates.js";
-import { toObject, toString } from "@app/common.js";
+import { toTrimmedString } from "@app/common.js";
 
 export default class PostEditor {
     #instance;
 
     constructor(title, initial) {
-        this.title = toString(title) || "Post editor";
-        this.initial = toObject(initial);
+        this.title = toTrimmedString(title) || "Post editor";
+        this.initial = {
+            title: toTrimmedString(initial?.title),
+            content: toTrimmedString(initial?.content)
+        }
         this.#instance = null;
     }
 
@@ -25,11 +28,11 @@ export default class PostEditor {
                 const popup = $(Swal.getPopup());
                 
                 popup.find("#post-editor-title")
-                    .val(toString(this.initial.title))
+                    .val(this.initial.title)
                     .attr("maxLength", config.POST_TITLE_MAX_LENGTH);
 
                 popup.find("#post-editor-content")
-                    .val(toString(this.initial.content))
+                    .val(this.initial.content)
                     .attr("maxLength", config.POST_CONTENT_MAX_LENGTH);
             },
 
@@ -51,8 +54,8 @@ export default class PostEditor {
                 }
 
                 if (
-                    title === toString(this.initial.title) &&
-                    content === toString(this.initial.content)
+                    title === this.initial.title &&
+                    content === this.initial.content
                 ) {
                     return Swal.showValidationMessage("The values are the same as before.");
                 }

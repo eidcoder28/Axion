@@ -9,8 +9,7 @@ import {
     lockEvent,
     quickInfo,
     Alert,
-    toObject,
-    toString
+    toTrimmedString
 } from "@app/common.js";
 
 async function getComments(state = {}) {
@@ -21,7 +20,7 @@ async function getComments(state = {}) {
 
 async function renderComments(state = {}, preFetchedResponse = null) {
     const response = preFetchedResponse || await getComments(state);
-    if (response && !response.success) return Alert.error({ text: response.error });
+    if (!response.success) return Alert.error({ text: response.error });
 
     state.items.clear();
     $(state.container).empty();
@@ -42,19 +41,18 @@ async function renderComments(state = {}, preFetchedResponse = null) {
     const fragment = new DocumentFragment();
 
     response.comments.forEach(comment => {
-        const safeComment = toObject(comment);
-        const safeUser = toObject(safeComment.user);
+        const user = comment.user || {};
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
-        state.items.set(safeComment._id, safeComment);
+        state.items.set(comment._id, comment);
 
         $("<h3>")
             .addClass("overflow")
-            .text(capitalize(safeUser.username) || "User")
+            .text(capitalize(user.username) || "User")
             .appendTo(header);
 
-        if (safeUser?._id && safeUser._id === quickInfo?._id) {
+        if (user._id && user._id === quickInfo._id) {
             const buttons = $("<div>").addClass("center").appendTo(header);
 
             $("<i>")
@@ -62,21 +60,21 @@ async function renderComments(state = {}, preFetchedResponse = null) {
                 .attr({
                     role: "button",
                     tabindex: "0",
-                    "data-id": safeComment._id
+                    "data-id": comment._id
                 })
                 .appendTo(buttons);
 
             $("<i>")
                 .addClass("fas fa-trash icon-helper comment-delete-btn")
-                .attr({ role: "button", tabindex: "0", "data-id": safeComment._id })
+                .attr({ role: "button", tabindex: "0", "data-id": comment._id })
                 .appendTo(buttons);
         }
 
         $("<p>")
-            .text(toString(safeComment.content) || "No content found")
+            .text(toTrimmedString(comment.content) || "No content found")
             .appendTo(card);
 
-        if (safeComment.editedAt) {
+        if (comment.editedAt) {
             $("<small>")
                 .text("(Edited)")
                 .css("color", "gray")

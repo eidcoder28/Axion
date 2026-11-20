@@ -1,20 +1,8 @@
-const FALLBACK_MSG = "Please re-check your request and try again.";
-
-function isValidString(str) {
-    return typeof str === "string" && str.trim().length > 0;
-}
-
-function getPositiveIntegersError(fallback, ...nums) {
-    return nums.every((num) => Number.isInteger(num) && num >= 1) ? null : fallback;
-}
-
 function capitalize(str) {
-    if (!isValidString(str)) return "";
-    return (str.charAt(0).toUpperCase() + str.slice(1)).trim();
+    return str.charAt(0).toUpperCase() + str.slice(1);
 }
 
 function formatLabel(template, label) {
-    if (!isValidString(template) || !isValidString(label)) return FALLBACK_MSG;
     return capitalize(template.replace("{label}", label.trim()));
 }
 
@@ -40,24 +28,10 @@ const errors = {
         EMPTY: (label) => formatLabel("{label} can't be empty.", label),
         INVALID_FORMAT: (label) => formatLabel("Invalid {label} format.", label),
         REQUIRED: (label) => formatLabel("{label} is required.", label),
-
-        MIN_LENGTH: (label, min) =>
-            getPositiveIntegersError(FALLBACK_MSG, min) ??
-            formatLabel(`{label} must be at least ${formatCharCount(min)}.`, label),
-
-        MAX_LENGTH: (label, max) =>
-            getPositiveIntegersError(FALLBACK_MSG, max) ??
-            formatLabel(`{label} must not exceed ${formatCharCount(max)}.`, label),
-
-        LENGTH_RANGE: (label, min, max) =>
-            getPositiveIntegersError(FALLBACK_MSG, min, max) ??
-            (min >= max
-                ? FALLBACK_MSG
-                : formatLabel(`{label} must be between ${min} and ${max} characters.`, label)),
-
-        EXACT_LENGTH: (label, length) =>
-            getPositiveIntegersError(FALLBACK_MSG, length) ??
-            formatLabel(`{label} must be exactly ${formatCharCount(length)}.`, label)
+        MIN_LENGTH: (label, min) => formatLabel(`{label} must be at least ${formatCharCount(min)}.`, label),
+        MAX_LENGTH: (label, max) => formatLabel(`{label} must not exceed ${formatCharCount(max)}.`, label),
+        LENGTH_RANGE: (label, min, max) => formatLabel(`{label} must be between ${min} and ${max} characters.`, label),
+        EXACT_LENGTH: (label, length) => formatLabel(`{label} must be exactly ${formatCharCount(length)}.`, label)
     }
 }
 

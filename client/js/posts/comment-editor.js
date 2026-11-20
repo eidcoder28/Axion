@@ -2,14 +2,14 @@ import config from "@shared/config.js";
 import errors from "@shared/errors.js";
 import Swal from "sweetalert2";
 import validator from "validator";
-import { toString } from "@app/common.js";
+import { toTrimmedString } from "@app/common.js";
 
 export default class CommentEditor {
     #instance;
 
     constructor(title, initial) {
-        this.title = toString(title) || "Comment editor";
-        this.initial = toString(initial);
+        this.title = toTrimmedString(title) || "Comment editor";
+        this.initial = toTrimmedString(initial);
         this.#instance = null;
     }
 
@@ -30,13 +30,13 @@ export default class CommentEditor {
             },
 
             preConfirm: result => {
-                const trimmed = toString(result);
+                const trimmed = toTrimmedString(result);
 
                 if (validator.isEmpty(trimmed)) {
                     return Swal.showValidationMessage(errors.VALIDATION.REQUIRED("comment"));
                 }
 
-                if (trimmed === toString(this.initial)) {
+                if (trimmed === this.initial) {
                     return Swal.showValidationMessage("The content is the same as before.");
                 }
 

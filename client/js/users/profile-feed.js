@@ -8,7 +8,6 @@ import {
     sendRequest,
     capitalize,
     lockEvent,
-    toObject,
     Alert
 } from "@app/common.js";
 
@@ -48,7 +47,7 @@ export function bindProfilePostEvents(state) {
     }));
 }
 
-export async function getProfilePosts(userId, skip) {
+export async function getProfilePosts(userId, skip = 0) {
     return await sendRequest({
         url: `/api/v1/users/${userId}/posts/?skip=${skip}`
     });
@@ -56,7 +55,7 @@ export async function getProfilePosts(userId, skip) {
 
 export async function renderProfilePosts(state = {}, preFetchedResponse = null) {
     const response = preFetchedResponse || await getProfilePosts(state.user.id, state.skip);
-    if (response && !response.success) return Alert.error({ text: response.error });
+    if (!response.success) return Alert.error({ text: response.error });
 
     state.items.clear();
     $(state.container).empty();
@@ -77,24 +76,23 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
     const fragment = new DocumentFragment();
 
     response.posts.forEach(post => {
-        const safePost = toObject(post);
-        state.items.set(safePost._id, safePost);
+        state.items.set(post._id, post);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
         $("<h2>")
             .addClass("overflow")
-            .text(capitalize(safePost.title) || "Untitled post")
+            .text(capitalize(post.title) || "Untitled post")
             .appendTo(header);
 
         $("<i>")
             .addClass("fas fa-link post-icon profile-post-share-btn")
-            .attr({ role: "button", tabindex: "0", "data-id": safePost._id })
+            .attr({ role: "button", tabindex: "0", "data-id": post._id })
             .appendTo(header);
 
         $("<div>")
             .addClass("post-content")
-            .html(renderSafeHtml(safePost.content) || "No content found")
+            .html(renderSafeHtml(post.content) || "No content found")
             .appendTo(card);
 
         if (state.user.me) {
@@ -102,16 +100,15 @@ export async function renderProfilePosts(state = {}, preFetchedResponse = null) 
 
             $("<button>")
                 .addClass("btn-danger w-full profile-post-delete-btn")
-                .attr("data-id", safePost._id)
+                .attr("data-id", post._id)
                 .html("<i class='fas fa-trash'></i>")
                 .appendTo(buttons);
 
             $("<button>")
                 .addClass("w-full profile-post-edit-btn")
-                .attr("data-id", safePost._id)
+                .attr("data-id", post._id)
                 .html("<i class='fas fa-edit'></i>")
                 .appendTo(buttons);
-
         }
     });
 

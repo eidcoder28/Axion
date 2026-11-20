@@ -8,7 +8,6 @@ import {
     renderSafeHtml,
     generatePostLink,
     lockEvent,
-    toObject,
     copy,
     Alert
 } from "@app/common.js";
@@ -29,7 +28,7 @@ postsContainer.on("click", ".post-share-btn", lockEvent(function () {
 
 postsContainer.on("click", ".post-author", lockEvent(function () {
     const post = postsMap.get(this.dataset.id);
-    return showProfile(toObject(post.user)._id);
+    return showProfile(post.user?._id);
 }));
 
 postsContainer.on("click", ".post-like-btn", lockEvent(async function () {
@@ -86,52 +85,51 @@ export async function renderPosts(posts = []) {
     const fragment = new DocumentFragment();
 
     posts.forEach(post => {
-        const safePost = toObject(post);
-        postsMap.set(safePost._id, safePost);
-        const safeUser = toObject(safePost.user);
+        postsMap.set(post._id, post);
+        const user = post.user || {};
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
 
         $("<h2>")
             .addClass("overflow")
-            .text(capitalize(safePost.title) || "No title found")
+            .text(capitalize(post.title) || "No title found")
             .appendTo(header);
 
         $("<i>")
             .addClass("fas fa-link post-icon post-share-btn")
-            .attr({ role: "button", tabindex: "0", "data-id": safePost._id })
+            .attr({ role: "button", tabindex: "0", "data-id": post._id })
             .appendTo(header);
 
         $("<div>")
             .addClass("post-content")
-            .html(renderSafeHtml(safePost.content) || "No content found")
+            .html(renderSafeHtml(post.content) || "No content found")
             .appendTo(card);
 
         $("<p>")
             .addClass("post-author")
             .css({ color: "red", cursor: "pointer" })
-            .attr({ role: "button", tabindex: "0", "data-id": safePost._id })
-            .text(`Created by: ${capitalize(safeUser.username) || "Someone"}`)
+            .attr({ role: "button", tabindex: "0", "data-id": post._id })
+            .text(`Created by: ${capitalize(user.username) || "Someone"}`)
             .appendTo(card);
 
         const reactions = $("<div>").addClass("reactions-container").appendTo(card);
-        const likes = Number(safePost.likes) || 0;
+        const likes = Number(post.likes) || 0;
 
         $("<button>")
             .addClass("post-like-btn")
-            .attr("data-id", safePost._id)
+            .attr("data-id", post._id)
             .html(`<i class="fas fa-thumbs-up"></i> <span class="likes-count">${likes}</span>`)
             .appendTo(reactions);
 
         $("<button>")
             .addClass("post-comments-btn")
-            .attr("data-id", safePost._id)
+            .attr("data-id", post._id)
             .html(`<i class="fas fa-comments"></i>`)
             .appendTo(reactions);
 
         $("<button>")
             .addClass("post-add-comment-btn")
-            .attr("data-id", safePost._id)
+            .attr("data-id", post._id)
             .html(`<i class="fas fa-comment-medical"></i>`)
             .appendTo(reactions);
     });
