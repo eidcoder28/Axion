@@ -47,7 +47,7 @@ async function renderComments(state = {}, preFetchedResponse = null) {
         const safeUser = toObject(safeComment.user);
         const card = $("<div>").addClass("card").appendTo(fragment);
         const header = $("<div>").addClass("space-between").appendTo(card);
-        
+
         state.items.set(safeComment._id, safeComment);
 
         $("<h3>")
@@ -97,7 +97,8 @@ export default async function showComments(id) {
         title: "Comments",
         html: templates.POST_COMMENTS(),
         stopKeydownPropagation: false,
-        confirmButtonText: "Close",
+        showConfirmButton: false,
+        showCloseButton: true,
         didOpen: () => {
             const popup = $(Swal.getPopup());
             state.container = popup.find("#comments-container");

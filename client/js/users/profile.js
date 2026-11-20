@@ -34,8 +34,9 @@ export default async function showProfile(id) {
     Swal.fire({
         titleText: `Hello, ${state.user.username}!`,
         html: templates.USER_PROFILE(state),
-        confirmButtonText: "Close",
         stopKeydownPropagation: false,
+        showConfirmButton: false,
+        showCloseButton: true,
         didOpen: () => {
             const popup = $(Swal.getPopup());
             state.container = popup.find("#user-posts-container");
