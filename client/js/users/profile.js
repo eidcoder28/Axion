@@ -13,10 +13,7 @@ import {
 } from "@app/common.js";
 
 export default async function showProfile(id) {
-    const response = await sendRequest({
-        url: `/api/v1/users/${id}/profile`
-    });
-
+    const response = await sendRequest({ url: `/api/v1/users/${id}/profile` });
     if (!response.success) return Alert.error({ text: response.error });
 
     const user = toObject(response.user);

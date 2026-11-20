@@ -8,8 +8,13 @@ import config from "@shared/config.js";
 import errors from "@shared/errors.js";
 import Notiflix from "notiflix";
 
-export const toObject = obj => Object.prototype.toString.call(obj) === "[object Object]" ? obj : {};
-export const toString = value => typeof value === "string" ? value.trim() : "";
+export function toObject(obj) {
+  return Object.prototype.toString.call(obj) === "[object Object]" ? obj : {};
+}
+
+export function toString(value) {
+  return typeof value === "string" ? value.trim() : "";
+}
 
 export async function copy(input) {
     const text = toString(input);

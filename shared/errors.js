@@ -1,22 +1,26 @@
 const FALLBACK_MSG = "Please re-check your request and try again.";
-const pluralRules = new Intl.PluralRules("en-US");
 
-const isValidString = (str) => typeof str === "string" && str.trim().length > 0;
-const getPositiveIntegersError = (fallback, ...nums) =>
-    nums.every((num) => Number.isInteger(num) && num >= 1) ? null : fallback;
+function isValidString(str) {
+    return typeof str === "string" && str.trim().length > 0;
+}
 
-const capitalize = (str) => {
+function getPositiveIntegersError(fallback, ...nums) {
+    return nums.every((num) => Number.isInteger(num) && num >= 1) ? null : fallback;
+}
+
+function capitalize(str) {
     if (!isValidString(str)) return "";
     return (str.charAt(0).toUpperCase() + str.slice(1)).trim();
 }
 
-const formatLabel = (template, label) => {
+function formatLabel(template, label) {
     if (!isValidString(template) || !isValidString(label)) return FALLBACK_MSG;
     return capitalize(template.replace("{label}", label.trim()));
 }
 
-const formatCharCount = (count) =>
-    `${count} ${pluralRules.select(count) === "one" ? "character" : "characters"}`;
+function formatCharCount(count) {
+    return `${count} ${count === 1 ? "character" : "characters"}`;
+}
 
 const errors = {
     INVALID_CREDENTIALS: () => "Invalid username or password.",
