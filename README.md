@@ -54,7 +54,7 @@ Tbh, MongoDB actually worked fine to get started, but I somewhat realized I was 
 
 - I've no real users, no production data, and Axion isn't even hosted online yet. Everything in my db is just test data I don't care about. That means I can finish this migration in a day or two without risking data corruption.
 
-- Even thoug these issues aren't hurting Axion at its current small scale, making the jump now sets the app up to scale comfortably into mid-size without technical debt. To keep some of the dev experience I liked with Mongo, I'm going to pair Postgres with Prisma.
+- Even though these issues aren't hurting Axion at its current small scale, making the jump now sets the app up to scale comfortably into mid-size without technical debt. To keep some of the dev experience I liked with Mongo, I'm going to pair Postgres with Prisma.
 
 ## Why there is only a few commits here?
 I built the prototype version locally in a few months without version control. Stupid, I know, but it's just a personal project at the end. 😁 (Btw, I did briefly use Git, but stupidly, I choose to wipe the commits because they were "bad")
