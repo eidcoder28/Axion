@@ -1,0 +1,23 @@
+{
+  "name": "@repo/shared",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "imports": {
+    "#shared/*.js": "./*.js",
+    "#shared/*": "./*.js",
+    "#*.js": "./*.js",
+    "#*": "./*.js"
+  },
+  "exports": {
+    "./*.js": "./*.js",
+    "./*": "./*.js"
+  },
+  "dependencies": {
+    "zod": "^4.6.7"
+  }
+}

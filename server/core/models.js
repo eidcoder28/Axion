@@ -1,0 +1,57 @@
+import { Schema, model } from "mongoose";
+import config from "#core/config";
+
+const usersSchema = new Schema({
+    password: { type: String, required: true },
+    email: {
+        type: String,
+        trim: true,
+        match: /.+\@.+\..+/,
+        required: true,
+        maxLength: config.EMAIL_MAX_LENGTH
+    },
+    username: {
+        type: String,
+        trim: true,
+        required: true,
+        lowercase: true,
+        minLength: config.USERNAME_MIN_LENGTH,
+        maxLength: config.USERNAME_MAX_LENGTH
+    }
+}, { timestamps: true });
+
+usersSchema.index({ username: -1 }, { unique: true });
+usersSchema.index({ email: -1 }, { unique: true });
+
+const likesSchema = new Schema({
+    user: { type: Schema.Types.ObjectId, ref: "Users", required: true },
+    post: { type: Schema.Types.ObjectId, ref: "Posts", required: true },
+}, { timestamps: true });
+
+likesSchema.index({ user: -1, post: -1 }, { unique: true });
+
+const postsSchema = new Schema({
+    title: { type: String, trim: true, required: true, maxLength: config.POST_TITLE_MAX_LENGTH },
+    content: { type: String, trim: true, required: true, maxLength: config.POST_CONTENT_MAX_LENGTH },
+    likes: { type: Number, default: 0, min: 0 },
+    user: { type: Schema.Types.ObjectId, ref: "Users", required: true },
+}, { timestamps: true });
+
+postsSchema.index({ user: -1 });
+postsSchema.index({ createdAt: -1, _id: -1 });
+
+const commentsSchema = new Schema({
+    post: { type: Schema.Types.ObjectId, ref: "Posts", required: true },
+    user: { type: Schema.Types.ObjectId, ref: "Users", required: true },
+    content: { type: String, trim: true, required: true, maxLength: config.COMMENTS_MAX_LENGTH },
+    editedAt: { type: Date, default: null }
+}, { timestamps: true });
+
+commentsSchema.index({ post: -1, createdAt: -1, _id: -1 });
+
+export default {
+    Users: model("Users", usersSchema, "users"),
+    Likes: model("Likes", likesSchema, "likes"),
+    Posts: model("Posts", postsSchema, "posts"),
+    Comments: model("Comments", commentsSchema, "comments")
+}

@@ -1,0 +1,25 @@
+{
+  "name": "@repo/client",
+  "version": "1.0.0",
+  "description": "",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "type": "module",
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.3.1",
+    "axios": "^1.21.1",
+    "cash-dom": "^8.1.5",
+    "dompurify": "^3.5.0",
+    "marked": "^18.3.0",
+    "notiflix": "^3.3.0",
+    "sweetalert2": "^11.26.26"
+  },
+  "devDependencies": {
+    "vite": "^8.3.8"
+  }
+}

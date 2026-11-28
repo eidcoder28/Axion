@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Axion Light</title>
+    <link rel="icon" href="/favicon.ico" />
+    <link rel="stylesheet" href="/src/css/main.css" />
+</head>
+
+<body>
+    <header>
+        <a href="/" class="logo">Axion</a>
+        <div class="center">
+            <i class="fas fa-user-plus icon-helper" id="signup-btn" role="button" tabindex="0"></i>
+            <div id="auth-buttons">
+                <i class="fas fa-user icon-helper" id="profile-btn" role="button" tabindex="0"></i>
+                <i class="fas fa-plus icon-helper" id="create-post-btn" role="button" tabindex="0"></i>
+                <i class="fas fa-sign-out icon-helper" id="signout-btn" role="button" tabindex="0"></i>
+            </div>
+        </div>
+    </header>
+
+    <main>
+        <div id="posts-container">
+            <!--Posts will be loaded here -->
+        </div>
+
+        <div class="center" id="posts-nav-container"></div>
+    </main>
+
+    <footer>
+        <p>&copy; 2026 Axion</p>
+    </footer>
+
+    <script type="module" src="/src/js/main.js"></script>
+</body>
+
+</html>

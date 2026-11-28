@@ -1,0 +1,28 @@
+{
+  "name": "axion",
+  "version": "1.0.0",
+  "description": "Axion is my simple microforum. I built it using Node.js, MongoDB, and Cash (cash-dom). I'll be releasing info about the architecture on [my blog](https://eidcoder.hashnode.dev).",
+  "scripts": {
+    "dev": "npm run dev --workspace=client",
+    "build": "npm run build --workspace=client",
+    "start": "npm start --workspace=server"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/eidcoder28/Axion.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "module",
+  "bugs": {
+    "url": "https://github.com/eidcoder28/Axion/issues"
+  },
+  "homepage": "https://github.com/eidcoder28/Axion#readme",
+  "private": true,
+  "workspaces": [
+    "client",
+    "server",
+    "shared"
+  ]
+}

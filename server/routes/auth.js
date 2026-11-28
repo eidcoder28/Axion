@@ -1,0 +1,31 @@
+import express from "express";
+import config from "#core/config";
+import { requireAuth, limit } from "#core/common";
+import {
+    loginValidator,
+    signupValidator,
+    getUserProfileValidator,
+    getUserPostsValidator
+} from "#core/express-validators";
+import {
+    login,
+    signup,
+    getUserProfile,
+    getUserPosts,
+    signout,
+    getQuickInfo,
+    getStatus
+} from "#controllers/auth";
+
+const router = express.Router();
+const authRateLimit = limit({ limit: config.AUTH_RATE_LIMIT_MAX_REQ });
+
+router.post("/auth/login", authRateLimit, loginValidator, login);
+router.post("/auth/signup", authRateLimit, signupValidator, signup);
+router.delete("/auth/signout", requireAuth, signout);
+router.get("/users/:id/profile", requireAuth, getUserProfileValidator, getUserProfile);
+router.get("/users/:id/posts", requireAuth, getUserPostsValidator, getUserPosts);
+router.get("/me/quick-info", requireAuth, getQuickInfo);
+router.get("/me/status", getStatus);
+
+export default router;
