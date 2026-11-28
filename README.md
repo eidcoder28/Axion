@@ -66,4 +66,4 @@ At the end of the day, I'm pretty happy that YOU liked my app, and I hope you st
 
 Either way, see you laterrrrr!!
 
-*(ps: I learned all this not from AIs, but from my mom. She's a CS professor)*
+*(PS: I learned all this not from AIs, but from my mom. She's a CS professor)*
